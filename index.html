@@ -11,31 +11,42 @@
       <div style="display: grid; height:3em;">
         <div style="grid-column: 1; border: 1px solid white;">
             <div style="text-align:center;">
-              <input style="position:absolute; left: 0.0em;  top:1.5em;"  type="button" title="Move Left" value="⬅️" onclick="sendPress('Left');" mouseUp="sendRelease('Left');" mouseLeave="sendRelease('Left');">
-              <input style="position:absolute; left: 1.25em; top:0.25em;" type="button" title="Move Up" value="⬆️" onclick="sendPress('Up');" mouseUp="sendRelease('Up');" mouseLeave="sendRelease('Up');">
-              <input style="position:absolute; left: 1.25em; top:2.75em;" type="button" title="Move Down" value="⬇️" onclick="sendPress('Down');" mouseUp="sendRelease('Down');" mouseLeave="sendRelease('Down');">
-              <input style="position:absolute; left: 2.5em;  top:1.5em;"  type="button" title="Move Right" value="➡️" onclick="sendPress('Right');" mouseUp="sendRelease('Right');" mouseLeave="sendRelease('Right');">
+              <input style="position:absolute; left: 0.0em;  top:1.5em;"  type="button" title="Move Left"  value="⬅️" onmousedown="sendPress('Left');"  onmouseup="sendRelease('Left');"  onmouseleave="sendRelease('Left');">
+              <input style="position:absolute; left: 1.25em; top:0.25em;" type="button" title="Move Up"    value="⬆️" onmousedown="sendPress('Up');"    onmouseup="sendRelease('Up');"    onmouseleave="sendRelease('Up');">
+              <input style="position:absolute; left: 1.25em; top:2.75em;" type="button" title="Move Down"  value="⬇️" onmousedown="sendPress('Down');"  onmouseup="sendRelease('Down');"  onmouseleave="sendRelease('Down');">
+              <input style="position:absolute; left: 2.5em;  top:1.5em;"  type="button" title="Move Right" value="➡️" onmousedown="sendPress('Right');" onmouseup="sendRelease('Right');" onmouseleave="sendRelease('Right');">
             </div>
         </div>
         <div style="grid-column: 2;  line-height: 4.5em; border: 1px solid white;">
           <div style="text-align:center;">
-            <input type="button" title="B Button" value="    🅱️" onclick="sendPress('B');" mouseUp="sendRelease('B');" mouseLeave="sendRelease('B');">
-            <input type="button" title="A Button" value="🅰️"     onclick="sendPress('A');" mouseUp="sendRelease('A');" mouseLeave="sendRelease('A');">
+            <input type="button" title="B Button" value="    🅱️" onmousedown="sendPress('B');" onmouseup="sendRelease('B');" onmouseleave="sendRelease('B');">
+            <input type="button" title="A Button" value="🅰️"     onmousedown="sendPress('A');" onmouseup="sendRelease('A');" onmouseleave="sendRelease('A');">
           </div>
         </div>
       </div>
     </div>
 
     <script>
+      var keypressStates = {};
       // Read the connecting ID from the URL
 
       // Initialize ourselves as a Peer
 
-      // Send commands on button presses
-      function sendPress(button)  { console.log("Pressed " +button+"!"); }
-      function sendRelease(button){ console.log("Released "+button+"!"); }
+      // Send commands on valid button presses
+      function sendPress(button)  {
+        if (!button in keypressStates || !keypressStates[button]) {
+          keypressStates[button] = true;
+          console.log("Pressed " +button+"!"); 
+        }
+      }
+      function sendRelease(button){
+        if (!button in keypressStates || keypressStates[button]) {
+          keypressStates[button] = false;
+          console.log("Released " +button+"!"); 
+        }
+      }
 
-      // Handle leaving gracefully
+      // Handle leaving the window gracefully
 
       // Attempt to prevent zooming....
       document.addEventListener('touchmove', function(event) {

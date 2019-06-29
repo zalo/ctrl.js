@@ -1,17 +1,27 @@
 <html style="overflow: hidden; height: 100%; width: 100%; position: fixed;">
   <head>
     <title>ctrl.js Controller</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
   </head>
 
   <body style="overflow: hidden; height: 100%; width: 100%; position: fixed;">
+    <script> 
+      // Attempt to prevent zooming....
+      document.addEventListener('touchmove', function(event) {
+        event = event.originalEvent || event;
+        if(event.scale !== 1) {
+          event.preventDefault();
+        }
+      }, false);
+    </script>
     <div style="font-size: 11.5vw;">
       <div style="display: grid; height:3em;">
         <div style="grid-column: 1; border: 1px solid white;">
             <div style="text-align:center;">
-              <font style="position:absolute; left: 0.0em;  top:1.5em;">⬅️</font>
-              <font style="position:absolute; left: 1.25em; top:0.25em"      >⬆️</font>
-              <font style="position:absolute; left: 1.25em; top:2.75em;" >⬇️</font>
-              <font style="position:absolute; left: 2.5em;  top:1.5em;">➡️</font>
+              <font style="position:absolute; left: 0.0em;  top:1.5em;" >⬅️</font>
+              <font style="position:absolute; left: 1.25em; top:0.25em" >⬆️</font>
+              <font style="position:absolute; left: 1.25em; top:2.75em;">⬇️</font>
+              <font style="position:absolute; left: 2.5em;  top:1.5em;" >➡️</font>
             </div>
         </div>
         <div style="grid-column: 2;  line-height: 4.5em; border: 1px solid white;">

@@ -2,35 +2,47 @@
   <head>
     <title>ctrl.js Controller</title>
     <meta name="viewport" content="width=device-width, user-scalable=no" />
+    <meta charset="UTF-8">
+    <style>input[type=button]{ background: none; border: none; font-size: 11.5vw; padding:0; } :focus { outline: none;}  </style>
   </head>
 
   <body style="overflow: hidden; height: 100%; width: 100%; position: fixed;">
-    <script> 
-      // Attempt to prevent zooming....
-      document.addEventListener('touchmove', function(event) {
-        event = event.originalEvent || event;
-        //if(event.scale !== 1) {
-          event.preventDefault();
-        //}
-      }, false);
-    </script>
     <div style="font-size: 11.5vw;">
       <div style="display: grid; height:3em;">
         <div style="grid-column: 1; border: 1px solid white;">
             <div style="text-align:center;">
-              <font style="position:absolute; left: 0.0em;  top:1.5em;" >⬅️</font>
-              <font style="position:absolute; left: 1.25em; top:0.25em" >⬆️</font>
-              <font style="position:absolute; left: 1.25em; top:2.75em;">⬇️</font>
-              <font style="position:absolute; left: 2.5em;  top:1.5em;" >➡️</font>
+              <input style="position:absolute; left: 0.0em;  top:1.5em;"  type="button" title="Move Left" value="⬅️" onclick="sendPress('Left');" mouseUp="sendRelease('Left');" mouseLeave="sendRelease('Left');">
+              <input style="position:absolute; left: 1.25em; top:0.25em;" type="button" title="Move Up" value="⬆️" onclick="sendPress('Up');" mouseUp="sendRelease('Up');" mouseLeave="sendRelease('Up');">
+              <input style="position:absolute; left: 1.25em; top:2.75em;" type="button" title="Move Down" value="⬇️" onclick="sendPress('Down');" mouseUp="sendRelease('Down');" mouseLeave="sendRelease('Down');">
+              <input style="position:absolute; left: 2.5em;  top:1.5em;"  type="button" title="Move Right" value="➡️" onclick="sendPress('Right');" mouseUp="sendRelease('Right');" mouseLeave="sendRelease('Right');">
             </div>
         </div>
         <div style="grid-column: 2;  line-height: 4.5em; border: 1px solid white;">
           <div style="text-align:center;">
-            <font>🅰️ 🅱️</font>
+            <input type="button" title="B Button" value="    🅱️" onclick="sendPress('B');" mouseUp="sendRelease('B');" mouseLeave="sendRelease('B');">
+            <input type="button" title="A Button" value="🅰️"     onclick="sendPress('A');" mouseUp="sendRelease('A');" mouseLeave="sendRelease('A');">
           </div>
         </div>
       </div>
-    </font>
+    </div>
+
+    <script>
+      // Read the connecting ID from the URL
+
+      // Initialize ourselves as a Peer
+
+      // Send commands on button presses
+      function sendPress(button)  { console.log("Pressed " +button+"!"); }
+      function sendRelease(button){ console.log("Released "+button+"!"); }
+
+      // Handle leaving gracefully
+
+      // Attempt to prevent zooming....
+      document.addEventListener('touchmove', function(event) {
+        event = event.originalEvent || event;
+        event.preventDefault();
+      }, false);
+    </script>
 
   </body>
 </html>

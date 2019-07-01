@@ -3,7 +3,7 @@
     <title>ctrl.js Controller</title>
     <meta name="viewport" content="width=device-width, user-scalable=no" />
     <meta charset="UTF-8">
-    <style>input[type=button]{ background: none; border: none; font-size: 11.5vw; padding:0; } :focus { outline: none;}  </style>
+    <style>input[type=button]{ background: none; border: none; font-size: 11.5vw; padding:0; user-select: none; } input[type=button]:focus { outline: none; } input[type=button]:active{ filter: hue-rotate(-60deg); }  </style>
   </head>
 
   <body style="overflow: hidden; height: 100%; width: 100%; position: fixed;">
@@ -45,6 +45,8 @@
           console.log("Released " +button+"!"); 
         }
       }
+
+      // Read from the "Name" Textfield and set the player's name...
 
       // Handle leaving the window gracefully
 

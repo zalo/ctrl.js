@@ -3,13 +3,18 @@
     <title>ctrl.js Controller</title>
     <meta name="viewport" content="width=device-width, user-scalable=no" />
     <meta charset="UTF-8">
-    <style>input[type=button]{ background: none; border: none; font-size: 11.5vw; padding:0; user-select: none; } input[type=button]:focus { outline: none; } input[type=button]:active{ filter: blur(3px); }  </style>
+    <style>
+      input[type=button]{ background: none; border: none; font-size: 11.5vw; padding:0; user-select: none; -webkit-touch-callout: none; -webkit-user-select: none;  } 
+      input[type=button]:focus { outline: none; }
+      input[type=button]:active{ filter: blur(3px); }
+    </style>
+    <script type="text/javascript" src="peerjs.min.js"></script>
   </head>
 
   <body style="overflow: hidden; height: 100%; width: 100%; position: fixed;">
     <div style="font-size: 11.5vw;">
       <div style="display: grid; height:3em;">
-        <div style="grid-column: 1; border: 1px solid white;">
+        <div style="grid-column: 1; border: none">
             <div style="text-align:center;">
               <input style="position:absolute; left: 0.0em;  top:1.5em;"  type="button" title="Move Left"  value="⬅️" onmousedown="sendPress('Left');"  onmouseup="sendRelease('Left');"  onmouseleave="sendRelease('Left');">
               <input style="position:absolute; left: 1.25em; top:0.25em;" type="button" title="Move Up"    value="⬆️" onmousedown="sendPress('Up');"    onmouseup="sendRelease('Up');"    onmouseleave="sendRelease('Up');">
@@ -17,7 +22,7 @@
               <input style="position:absolute; left: 2.5em;  top:1.5em;"  type="button" title="Move Right" value="➡️" onmousedown="sendPress('Right');" onmouseup="sendRelease('Right');" onmouseleave="sendRelease('Right');">
             </div>
         </div>
-        <div style="grid-column: 2;  line-height: 4.5em; border: 1px solid white;">
+        <div style="grid-column: 2;  line-height: 4.5em; border: none;">
           <div style="text-align:center;">
             <input type="button" title="B Button" value="    🅱️" onmousedown="sendPress('B');" onmouseup="sendRelease('B');" onmouseleave="sendRelease('B');">
             <input type="button" title="A Button" value="🅰️"     onmousedown="sendPress('A');" onmouseup="sendRelease('A');" onmouseleave="sendRelease('A');">
@@ -28,21 +33,57 @@
 
     <script>
       var keypressStates = {};
-      // Read the connecting ID from the URL
 
       // Initialize ourselves as a Peer
+      var myID = null;
+      var peer = new Peer();
+      peer.on('open', function(id) {
+        myID = id;
+        console.log('My peer ID is: ' + myID);
+      });
+      peer.on('error', function(err) { console.error(err); });
+      var conn = null;
+
+      // Read the connecting ID from the URL
+      var searchParams = new URLSearchParams(window.location.search);
+      if (searchParams.has("id")) {
+        conn = peer.connect(searchParams.get("id"));
+
+        conn.on('open', function() {
+          // Receive messages
+          conn.on('data', function(data) {
+            //if(playerNum in data && data.playerNum !== undefined){
+            //  console.log("I am now player "+data.playerNum);
+            //}else{
+              console.log('Received', data);
+            //}
+          });
+          document.body.style.backgroundColor = "green";
+        });
+        conn.on('close', function() {
+          console.log("Disconnected; perhaps the server shut down?");
+          document.body.style.backgroundColor = "red";
+        });
+      }
 
       // Send commands on valid button presses
       function sendPress(button)  {
         if (!button in keypressStates || !keypressStates[button]) {
           keypressStates[button] = true;
-          console.log("Pressed " +button+"!"); 
+          console.log("Pressed " +button+"!");
+          if(conn != null){
+            conn.send({ event: "press", button: button});
+          }
         }
+        event.preventDefault();
       }
       function sendRelease(button){
         if (!button in keypressStates || keypressStates[button]) {
           keypressStates[button] = false;
-          console.log("Released " +button+"!"); 
+          console.log("Released " +button+"!");
+          if(conn != null){
+            conn.send({ event: "release", button: button});
+          }
         }
       }
 
@@ -55,6 +96,12 @@
         event = event.originalEvent || event;
         event.preventDefault();
       }, false);
+
+      // Clean up connection; This appears to be a futile gesture...
+      window.addEventListener("unload", function(event) {
+        if(conn !== null){ conn.close(); }
+        if(peer !== null){ peer.close(); }
+      });
     </script>
 
   </body>

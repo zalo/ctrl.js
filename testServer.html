@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <title>ctrl.js Boring Server</title>
+    <script type="text/javascript" src="peerjs.min.js"></script>
+  </head>
+
+  <body>
+    I am a boring server for now.
+    <script>
+      // Initialize ourselves as a Peer
+      var myID = null;
+      var peer = new Peer();
+      peer.on('open', function(id) {
+        myID = id;
+        console.log('My peer ID is: ' + myID);
+      });
+
+      var connections = {};
+      peer.on('connection', function(connection) {
+        connection.on('open', function(){
+          connections[connection.peer] = connection;
+          console.log('I have seen that: ' + connection.peer + " has successfully connected!");
+          connection.send({playerNum: Object.keys(connections).length});
+        });
+        connection.on('data', function(data){
+          console.log(data);
+        });
+        connection.on('close', function(){
+          console.log(this.peer + " has left...");
+          delete connections[connection.peer];
+        });
+        connection.on('error', function(err){ console.error(err); });
+      });
+
+      peer.on('error', function(err) { console.error(err); });
+    </script>
+
+  </body>
+</html>

@@ -2,10 +2,13 @@
   <head>
     <title>ctrl.js Boring Server</title>
     <script type="text/javascript" src="peerjs.min.js"></script>
+    <script type="text/javascript" src="qrcode.min.js"></script>
   </head>
 
   <body>
     I am a boring server for now.
+    <div id="qrcode"></div>
+    <div id="eventHistory"></div>
     <script>
       // Initialize ourselves as a Peer
       var myID = null;
@@ -13,6 +16,7 @@
       peer.on('open', function(id) {
         myID = id;
         console.log('My peer ID is: ' + myID);
+        var qrcode = new QRCode(document.getElementById("qrcode"), "https://zalo.github.io/ctrl.js?id="+myID);
       });
 
       var connections = {};
@@ -20,17 +24,23 @@
         connection.on('open', function(){
           connections[connection.peer] = connection;
           console.log('I have seen that: ' + connection.peer + " has successfully connected!");
-          connection.send({playerNum: Object.keys(connections).length});
+          updatePlayerNumbers();
         });
         connection.on('data', function(data){
-          console.log(data);
+          if("pingTime" in data){ connection.send(data); }
+          if("playerName" in data){ connection.playerName = data.playerName; }
+          document.getElementById("eventHistory").innerText += data + "\n";
         });
         connection.on('close', function(){
           console.log(this.peer + " has left...");
           delete connections[connection.peer];
+          updatePlayerNumbers();
         });
         connection.on('error', function(err){ console.error(err); });
       });
+      function updatePlayerNumbers(){
+        let i = 0; for (let conn in connections) { if(conn.open) { conn.send({playerNum: i}); i+=1; } }
+      }
 
       peer.on('error', function(err) { console.error(err); });
     </script>

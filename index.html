@@ -12,20 +12,25 @@
   </head>
 
   <body style="overflow: hidden; height: 100%; width: 100%; position: fixed;">
+    <input id="PlayerName" type="text" onchange="setPlayerName();" onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"></input>
+    <div id="Ping" style="text-align:center; display:inline;">
+        Connecting...
+    </div>
+
     <div style="font-size: 11.5vw;">
       <div style="display: grid; height:3em;">
         <div style="grid-column: 1; border: none">
             <div style="text-align:center;">
-              <input style="position:absolute; left: 0.0em;  top:1.5em;"  type="button" title="Move Left"  value="⬅️" onmousedown="sendPress('Left');"  onmouseup="sendRelease('Left');"  onmouseleave="sendRelease('Left');">
-              <input style="position:absolute; left: 1.25em; top:0.25em;" type="button" title="Move Up"    value="⬆️" onmousedown="sendPress('Up');"    onmouseup="sendRelease('Up');"    onmouseleave="sendRelease('Up');">
-              <input style="position:absolute; left: 1.25em; top:2.75em;" type="button" title="Move Down"  value="⬇️" onmousedown="sendPress('Down');"  onmouseup="sendRelease('Down');"  onmouseleave="sendRelease('Down');">
-              <input style="position:absolute; left: 2.5em;  top:1.5em;"  type="button" title="Move Right" value="➡️" onmousedown="sendPress('Right');" onmouseup="sendRelease('Right');" onmouseleave="sendRelease('Right');">
+              <input style="position:absolute; left: 0.0em;  top:1.5em;"  type="button" title="Move Left"  value="⬅️" ontouchstart="sendPress('Left');"  ontouchend="sendRelease('Left');"  ontouchcancel="sendRelease('Left');">
+              <input style="position:absolute; left: 1.25em; top:0.25em;" type="button" title="Move Up"    value="⬆️" ontouchstart="sendPress('Up');"    ontouchend="sendRelease('Up');"    ontouchcancel="sendRelease('Up');">
+              <input style="position:absolute; left: 1.25em; top:2.75em;" type="button" title="Move Down"  value="⬇️" ontouchstart="sendPress('Down');"  ontouchend="sendRelease('Down');"  ontouchcancel="sendRelease('Down');">
+              <input style="position:absolute; left: 2.5em;  top:1.5em;"  type="button" title="Move Right" value="➡️" ontouchstart="sendPress('Right');" ontouchend="sendRelease('Right');" ontouchcancel="sendRelease('Right');">
             </div>
         </div>
         <div style="grid-column: 2;  line-height: 4.5em; border: none;">
           <div style="text-align:center;">
-            <input type="button" title="B Button" value="    🅱️" onmousedown="sendPress('B');" onmouseup="sendRelease('B');" onmouseleave="sendRelease('B');">
-            <input type="button" title="A Button" value="🅰️"     onmousedown="sendPress('A');" onmouseup="sendRelease('A');" onmouseleave="sendRelease('A');">
+            <input type="button" title="B Button" value="    🅱️" ontouchstart="sendPress('B');" ontouchend="sendRelease('B');" ontouchcancel="sendRelease('B');">
+            <input type="button" title="A Button" value="🅰️"     ontouchstart="sendPress('A');" ontouchend="sendRelease('A');" ontouchcancel="sendRelease('A');">
           </div>
         </div>
       </div>
@@ -33,31 +38,36 @@
 
     <script>
       var keypressStates = {};
-
-      // Initialize ourselves as a Peer
-      var myID = null;
-      var peer = new Peer();
-      peer.on('open', function(id) {
-        myID = id;
-        console.log('My peer ID is: ' + myID);
-      });
-      peer.on('error', function(err) { console.error(err); });
-      var conn = null;
+      var playerNumber = -1;
+      var playerName = localStorage.getItem('ctrljsPlayerName');
+      document.getElementById("PlayerName").value = playerName;
 
       // Read the connecting ID from the URL
       var searchParams = new URLSearchParams(window.location.search);
       if (searchParams.has("id")) {
-        conn = peer.connect(searchParams.get("id"));
+        // Initialize ourselves as a Peer
+        var myID = null;
+        var peer = new Peer();
+        peer.on('open', function(id) {
+          myID = id;
+          console.log('My peer ID is: ' + myID);
+        });
+        peer.on('error', function(err) { console.error(err); });
+        var conn = peer.connect(searchParams.get("id"));
 
         conn.on('open', function() {
           // Receive messages
           conn.on('data', function(data) {
-            //if(playerNum in data && data.playerNum !== undefined){
-            //  console.log("I am now player "+data.playerNum);
-            //}else{
+            if("playerNum" in data){ playerNumber = data.playerNum; }
+            if("pingTime" in data){
+              let pingMsg = "Player " + playerNumber + " - Ping: " + Math.round(performance.now() - data.pingTime) +"ms";
+              document.getElementById("Ping").innerText = pingMsg;
+            }else{
               console.log('Received', data);
-            //}
+            }
           });
+          setPlayerName();
+          measurePingPeriodically();
           document.body.style.backgroundColor = "green";
         });
         conn.on('close', function() {
@@ -66,7 +76,7 @@
         });
       }
 
-      // Send commands on valid button presses
+      // Send commands on valid button presses and releases
       function sendPress(button)  {
         if (!button in keypressStates || !keypressStates[button]) {
           keypressStates[button] = true;
@@ -87,9 +97,20 @@
         }
       }
 
-      // Read from the "Name" Textfield and set the player's name...
+      // Update the Ping Measurement once every so often
+      function measurePingPeriodically(){
+        setTimeout(()=>{
+          if(conn != null){ conn.send({ pingTime: performance.now() }); }
+          measurePingPeriodically();
+        }, 2500);
+      }
 
-      // Handle leaving the window gracefully
+      // Read from the "Name" Textfield and set the player's name...
+      function setPlayerName(){
+        playerName = document.getElementById("PlayerName").value;
+        localStorage.setItem('ctrljsPlayerName', playerName);
+        if(conn != null){ conn.send({ playerName: playerName }); }
+      }
 
       // Attempt to prevent zooming....
       document.addEventListener('touchmove', function(event) {
@@ -97,6 +118,7 @@
         event.preventDefault();
       }, false);
 
+      // Handle leaving the window gracefully
       // Clean up connection; This appears to be a futile gesture...
       window.addEventListener("unload", function(event) {
         if(conn !== null){ conn.close(); }

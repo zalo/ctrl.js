@@ -29,7 +29,7 @@
         connection.on('data', function(data){
           if("pingTime" in data){ connection.send(data); }
           if("playerName" in data){ connection.playerName = data.playerName; }
-          document.getElementById("eventHistory").innerText += data + "\n";
+          document.getElementById("eventHistory").innerText = JSON.stringify(data) + "\n" + document.getElementById("eventHistory").innerText;
         });
         connection.on('close', function(){
           console.log(this.peer + " has left...");

@@ -79,7 +79,7 @@ var ctrlJsServer = function () {
     this.createStatusView = function(){
       // Create the StatusView div using spiffy APIs
       this.statusView = document.createElement("div", { id: 'statusView' });
-      this.statusView.style = "position:fixed; bottom:0px; right:0px; border: 1px solid black;";
+      this.statusView.style = "position:fixed; bottom:0px; right:0px; border: 1px solid black; background:white;";
       this.statusView.innerText = "Players";
 
       // Add the Players Container
@@ -117,17 +117,17 @@ var ctrlJsServer = function () {
       }
     }
     this.spoofKeyboardEvent = function(connection, button, state) {
-      //let mapping = this.defaultKeyMappings[button];
-      //let keyOptions = { key: mapping.key, code: mapping.code };
+      let mapping = this.defaultKeyMappings[button];
+      let keyOptions = { key: mapping.key, code: mapping.code, keyCode: mapping.keyCode, bubbles: true, cancelable: false };
 
       if(state){
-        document.dispatchEvent(new KeyboardEvent("keydown",  this.defaultKeyMappings[button]));
-        document.dispatchEvent(new KeyboardEvent("keypress", this.defaultKeyMappings[button]));
-        window  .dispatchEvent(new KeyboardEvent("keydown",  this.defaultKeyMappings[button]));
-        window  .dispatchEvent(new KeyboardEvent("keypress", this.defaultKeyMappings[button]));
+        window.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
+        window.dispatchEvent(new KeyboardEvent("keypress", keyOptions));
+        document.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
+        document.dispatchEvent(new KeyboardEvent("keypress", keyOptions));
       }else{
-        document.dispatchEvent(new KeyboardEvent("keyup",    this.defaultKeyMappings[button]));
-        window  .dispatchEvent(new KeyboardEvent("keyup",    this.defaultKeyMappings[button]));
+        window.dispatchEvent(new KeyboardEvent("keyup", keyOptions));
+        document.dispatchEvent(new KeyboardEvent("keyup", keyOptions));
       }
     }
 

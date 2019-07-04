@@ -155,12 +155,13 @@ var ctrlJsServer = function () {
     // Give the user an out when they hit the Cross-Origin IFrame Issue
     this.addIFrameWarningDiv = function() {
       this.statusView.iframeWarning = document.createElement("div", { id: "StatusIFrameWarning" });
-      this.statusView.iframeWarning.style = "border: 1px solid black;";
-      this.statusView.iframeWarning.innerHTML = "Can't send keyboard inputs into IFrame. "+
-        "Press <a href=\"javascript:ctrlJs.hideWarning();\">Okay</a> to Ignore, or Open the IFrame Directly:";
+      this.statusView.iframeWarning.style = "border: 1px solid red;font-size:1.5em;font-weight:bold;";
+      this.statusView.iframeWarning.innerHTML = "<p>Can't send keyboard inputs into IFrame.</p>"+
+        "<p>Press <a href=\"javascript:document.getElementById(\"statusView\").removeChild(document.getElementById(\"StatusIFrameWarning\"));\">Okay</a> to Ignore</p>"+
+        "<p> or Open the IFrame Directly:</p>";
       for(let iframe of this.listOfIFrames){
         if(iframe.problematic){
-          this.statusView.iframeWarning.innerHTML += "\n<a href="+iframe.src+">"+iframe.id+"</a>";
+          this.statusView.iframeWarning.innerHTML += "<p><a href="+iframe.src+">"+iframe.id+"</a></p>";
         }
       }
       this.statusView.insertAdjacentElement("afterbegin", this.statusView.iframeWarning);

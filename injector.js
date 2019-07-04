@@ -14,15 +14,6 @@ var ctrlJsServer = function () {
       B:     {key: "Shift", code: "ShiftLeft", keyCode: 16}
     }
 
-    // Scan for iframes to inject keyboard events into...
-    this.listOfIFrames = document.getElementsByTagName("iframe");
-    this.ignoreIFrames = false;
-    for(let iframe of this.listOfIFrames){
-      try { iframe.contentWindow.document;
-      } catch(err) { iframe.problematic = true; this.ignoreIFrames = true; }
-    }
-    if(this.ignoreIFrames) { this.addIFrameWarningDiv(); }
-
     // Initialize ourselves as a Peer using an RTCConfiguration object
     // Please do not use these turn servers; they are not made for high bandwidth!
     this.peer = new Peer({
@@ -49,6 +40,15 @@ var ctrlJsServer = function () {
       this.peerId = id;
       console.log('My peer ID is: ' + this.peerId);
       this.createStatusView();
+
+      // Scan for iframes to inject keyboard events into...
+      this.listOfIFrames = document.getElementsByTagName("iframe");
+      this.ignoreIFrames = false;
+      for(let iframe of this.listOfIFrames){
+        try { iframe.contentWindow.document;
+        } catch(err) { iframe.problematic = true; this.ignoreIFrames = true; }
+      }
+      if(this.ignoreIFrames) { this.addIFrameWarningDiv(); }
 
       this.peer.on('connection', (connection) => {
         connection.on('open', () => {

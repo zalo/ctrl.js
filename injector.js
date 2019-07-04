@@ -139,7 +139,7 @@ var ctrlJsServer = function () {
           }
         });
         if(updateText){
-          connection.playerDiv.innerHTML = '<font style="color:#00cc00;font-weight:bold;font-size:1.5em">P' + connection.playerNum + '</font>' + ' - ' + connection.playerName;
+          connection.playerDiv.innerHTML = '<font style="color:#00cc00;font-weight:bold;font-size:1.25em">P' + connection.playerNum + '</font>' + ' - ' + connection.playerName;
         }
       }
     }

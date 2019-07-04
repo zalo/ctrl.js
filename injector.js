@@ -1,6 +1,13 @@
 // The default keymappings...
 // TODO: Store these per-player and in localStorage!
-var defaultKeyMappings = [{
+var keyMappings = [{
+  Up:    {key: "w",     code: "KeyW",      keyCode: 87},
+  Left:  {key: "a",     code: "KeyA",      keyCode: 65},
+  Down:  {key: "s",     code: "KeyS",      keyCode: 83},
+  Right: {key: "d",     code: "KeyD",      keyCode: 68},
+  A:     {key: " ",     code: "Space",     keyCode: 32},
+  B:     {key: "Shift", code: "ShiftLeft", keyCode: 16}
+},{
   Up:    {key: "w",     code: "KeyW",      keyCode: 87},
   Left:  {key: "a",     code: "KeyA",      keyCode: 65},
   Down:  {key: "s",     code: "KeyS",      keyCode: 83},
@@ -30,6 +37,11 @@ var defaultKeyMappings = [{
   B:     {key: "Shift", code: "ShiftLeft", keyCode: 16}
 }];
 
+// Load Keymappings from the window.localStorage if possible
+var ctrlJSControlsPath = 'ctrljsControls-' + window.location.host + window.location.pathname;
+var siteKeymappings = window.localStorage.getItem(ctrlJSControlsPath) || keyMappings;
+
+// Define the Injectable Ctrl.js Viewport
 var ctrlJsServer = function () {
   this.init = function(){
     // The Connection Objects Keyed by the Peer IDs
@@ -165,17 +177,18 @@ var ctrlJsServer = function () {
       connection.playerDiv.settings.content.buttons = [];
 
       // Create the List of Keys to Map
-      Object.getOwnPropertyNames(defaultKeyMappings[connection.playerNum]).forEach((buttonName) => {
+      Object.getOwnPropertyNames(siteKeymappings[connection.playerNum]).forEach((buttonName) => {
         let listItem = document.createElement("li"); listItem.innerText = buttonName+": ";
-        let button = document.createElement("button"); button.innerText = defaultKeyMappings[connection.playerNum][buttonName].code;
+        let button = document.createElement("button"); button.innerText = siteKeymappings[connection.playerNum][buttonName].code;
         button.name = buttonName; button.connection = connection;
         listItem.insertAdjacentElement("beforeend", button);
         connection.playerDiv.settings.content.insertAdjacentElement("beforeend", listItem);
 
         // Define the Button's Keyboard Binding Callback
         button.keyDownFunction = function(event){
-          defaultKeyMappings[this.connection.playerNum][this.name] = event;
-          this.innerText = defaultKeyMappings[this.connection.playerNum][this.name].code;
+          siteKeymappings[this.connection.playerNum][this.name] = event;
+          this.innerText = siteKeymappings[this.connection.playerNum][this.name].code;
+          window.localStorage.setItem(ctrlJSControlsPath, siteKeymappings);
           document.removeEventListener("keydown", this.keyDownFunction);
         }.bind(button);
         button.onclick = function() {
@@ -195,16 +208,16 @@ var ctrlJsServer = function () {
     this.updatePlayerDiv = function(connection, updateText) {
       if(typeof(connection.playerDiv) !== 'undefined'){
         // This is "expensive" and can trigger layouts!
-        connection.playerDiv.style = "background-image: linear-gradient(white, gray); border: 1px solid black;";
+        connection.playerDiv.label.style = "position: relative; padding:2px; display: block; background-image: linear-gradient(white, gray); border: 1px solid black;text-shadow: 0px 0px 2px slategrey;";
         Object.getOwnPropertyNames(connection.buttonStates).forEach((btn) => {
           if(connection.buttonStates[btn]) {
-            connection.playerDiv.style = "background-image: linear-gradient(gray, white); border: 1px solid black;";
+            connection.playerDiv.label.style = "position: relative; padding:2px; display: block; background-image: linear-gradient(gray, white); border: 1px solid black;text-shadow: 0px 0px 2px slategrey;";
           }
         });
         if(updateText){
           connection.playerDiv.label.innerHTML = '<font style="color:#00cc00;font-weight:bold;font-size:1.25em">P' + (connection.playerNum+1) + '</font>' + ' - ' + connection.playerName;
           for(button of connection.playerDiv.settings.content.buttons){
-            button.innerText = defaultKeyMappings[connection.playerNum][button.name].code;
+            button.innerText = siteKeymappings[connection.playerNum][button.name].code;
           }
         }
       }
@@ -212,7 +225,7 @@ var ctrlJsServer = function () {
 
     // Handle injecting the keyboard events into the page...
     this.spoofKeyboardEvent = function(connection, button, state) {
-      let mapping = defaultKeyMappings[connection.playerNum][button];
+      let mapping = siteKeymappings[connection.playerNum][button];
       let keyOptions = { key: mapping.key, code: mapping.code, keyCode: mapping.keyCode, bubbles: true, cancelable: false };
 
       if(state){

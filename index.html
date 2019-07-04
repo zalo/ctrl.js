@@ -13,7 +13,7 @@
 
   <body style="overflow: hidden; height: 100%; width: 100%; position: fixed;">
     <input id="PlayerName" type="text" onchange="setPlayerName();" oninput="this.onchange();"></input>
-    <div id="Ping" style="text-align:center; display:inline;">
+    <div id="Status" style="text-align:center; display:inline;">
         Connecting...
     </div>
 
@@ -73,12 +73,13 @@
         var conn = peer.connect(searchParams.get("id"));
 
         conn.on('open', function() {
+          document.getElementById("Status").innerText = "Connected!";
           // Receive messages
           conn.on('data', function(data) {
             if("playerNum" in data){ playerNumber = data.playerNum; }
             if("pingTime" in data){
               let pingMsg = "Player " + playerNumber + " - Ping: " + Math.round(performance.now() - data.pingTime) +"ms";
-              document.getElementById("Ping").innerText = pingMsg;
+              document.getElementById("Status").innerText = pingMsg;
             }else{
               console.log('Received', data);
             }

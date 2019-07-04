@@ -5,6 +5,8 @@ var ctrlJsServer = function () {
     // This Instance's PeerID
     this.peerId = null;
 
+    // The default keymappings...
+    // TODO: Store these per-player and in localStorage!
     this.defaultKeyMappings = {
       Up:    {key: "w",     code: "KeyW",      keyCode: 87},
       Left:  {key: "a",     code: "KeyA",      keyCode: 65},
@@ -129,7 +131,6 @@ var ctrlJsServer = function () {
     }
     this.updatePlayerDiv = function(connection, updateText) {
       if(typeof(connection.playerDiv) !== 'undefined'){
-        let bulletColor = '#00FF00';
         // This is "expensive" and can trigger layouts!
         connection.playerDiv.style = "background-image: linear-gradient(white, gray); border: 1px solid black;";
         Object.getOwnPropertyNames(connection.buttonStates).forEach((btn) => {
@@ -138,10 +139,13 @@ var ctrlJsServer = function () {
           }
         });
         if(updateText){
-          connection.playerDiv.innerHTML = '<font style="color:'+bulletColor+';font-weight:bold;font-size:1.5em"> + </font>' + connection.playerNum + ' - ' + connection.playerName;
+          connection.playerDiv.innerHTML = '<font style="color:#00cc00;font-weight:bold;font-size:1.5em">P' + connection.playerNum + '</font>' + ' - ' + connection.playerName;
         }
       }
     }
+
+    // Handle injecting the keyboard events into the page...
+    // TODO: Inject the events according to the specific connection playerNum's keymapping...
     this.spoofKeyboardEvent = function(connection, button, state) {
       let mapping = this.defaultKeyMappings[button];
       let keyOptions = { key: mapping.key, code: mapping.code, keyCode: mapping.keyCode, bubbles: true, cancelable: false };

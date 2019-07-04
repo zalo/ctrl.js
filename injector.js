@@ -92,9 +92,15 @@ var ctrlJsServer = function () {
       this.statusView.players.insertAdjacentElement("beforeend", connection.playerDiv);
     }
     this.updatePlayerDiv = function(connection) {
-      let bulletColor = '00FF00';
-      for(let state in connection.buttonStates) { if(state) { bulletColor = '00FF6C'; } }
-      connection.playerDiv.innerHTML = "<font style=color:"+bulletColor+";font-weight:bold;> + </font>" + connection.playerNum + " - " + connection.playerName;
+      if(typeof(connection.playerDiv) !== 'undefined'){
+        let bulletColor = '#00FF00';
+        connection.playerDiv.style = "background-image: linear-gradient(white, gray); border: 1px solid black;";
+        Object.getOwnPropertyNames(connection.buttonStates).forEach((btn) => {
+           if(connection.buttonStates[btn]) {
+              connection.playerDiv.style = "background-image: linear-gradient(gray, white); border: 1px solid black;";
+            } });
+        connection.playerDiv.innerHTML = '<font style="color:'+bulletColor+';font-weight:bold;font-size:1.5em"> + </font>' + connection.playerNum + ' - ' + connection.playerName;
+      }
     }
 
     // The number of players have changed, so send updates to all of the connected clients.
@@ -110,7 +116,8 @@ var ctrlJsServer = function () {
   }
 
   // Don't initialize the bookmarklet again if there's already a StatusView
-  if(!(document.getElementById("statusView"))){
+  let existingStatusView = document.getElementById("statusView");
+  if(typeof(existingStatusView) === 'undefined' || existingStatusView === null){
     this.init();
   } else { delete this; }
 }

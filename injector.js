@@ -88,17 +88,20 @@ var ctrlJsServer = function () {
     // Create the Miniature Viewport in the corner of the page
     this.createStatusView = function(){
       // Create the StatusView div using spiffy APIs
-      this.statusView = document.createElement("div", { id: 'statusView' });
+      this.statusView = document.createElement("div");
+      this.statusView.id = "statusView";
       this.statusView.style = "position:fixed; bottom:0px; right:0px; border: 1px solid black; background:white; z-index: 10002;";
       this.statusView.innerText = "Players";
 
       // Add the Players Container
-      this.statusView.players = document.createElement("div", { id: 'statusViewPlayers' });
+      this.statusView.players = document.createElement("div");
+      this.statusView.players.id = "statusViewPlayers";
       this.statusView.players.style = "border: 1px solid black;";
       this.statusView.insertAdjacentElement("beforeend", this.statusView.players);
 
       // Add the QR Code (with padding so it will scan!)
-      this.statusView.qrContainer = document.createElement("div", { id: 'qrcodeContainer' });
+      this.statusView.qrContainer = document.createElement("div");
+      this.statusView.qrContainer.id = "qrcodeContainer";
       this.statusView.qrContainer.style = "padding:10px";
       this.statusView.insertAdjacentElement("beforeend", this.statusView.qrContainer);
       this.statusView.qrCode = new QRCode(this.statusView.qrContainer, "https://zalo.github.io/ctrl.js?id=" + this.peerId);
@@ -109,7 +112,8 @@ var ctrlJsServer = function () {
 
     // Manage the player statuses
     this.addPlayerDiv = function(connection) {
-      connection.playerDiv = document.createElement("div", { id: connection.peer+"'s Player Status" });
+      connection.playerDiv = document.createElement("div");
+      connection.playerDiv.id = connection.peer+"'s Player Status";
       connection.playerDiv.style = "background-image: linear-gradient(white, gray); border: 1px solid black;";
       connection.playerDiv.innerHTML = "New Player";
       this.statusView.players.insertAdjacentElement("beforeend", connection.playerDiv);
@@ -154,7 +158,8 @@ var ctrlJsServer = function () {
 
     // Give the user an out when they hit the Cross-Origin IFrame Issue
     this.addIFrameWarningDiv = function() {
-      this.statusView.iframeWarning = document.createElement("div", { id: "StatusIFrameWarning" });
+      this.statusView.iframeWarning = document.createElement("div");
+      this.statusView.iframeWarning.id = "StatusIFrameWarning";
       this.statusView.iframeWarning.style = "border: 1px solid red;font-size:1.15em;font-weight:bold;";
       this.statusView.iframeWarning.innerHTML = "<p>Can't send keyboard inputs into IFrame.</p>"+
         '<p>Press <a href='+ "\"javascript:document.getElementById('statusView').removeChild(document.getElementById('StatusIFrameWarning'));\">Okay</a> to Ignore</p>"+

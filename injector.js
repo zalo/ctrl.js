@@ -93,18 +93,27 @@ var ctrlJsServer = function () {
       this.statusView.style = "position:fixed; bottom:0px; right:0px; border: 1px solid black; background:white; z-index: 10002;";
       this.statusView.innerText = "Players";
 
-      // Add the Players Container
+      // Add the Player's Container
       this.statusView.players = document.createElement("div");
       this.statusView.players.id = "statusViewPlayers";
       this.statusView.players.style = "border: 1px solid black;";
       this.statusView.insertAdjacentElement("beforeend", this.statusView.players);
 
       // Add the QR Code (with padding so it will scan!)
+      let qrCodeLink = "https://zalo.github.io/ctrl.js?id=" + this.peerId;
       this.statusView.qrContainer = document.createElement("div");
       this.statusView.qrContainer.id = "qrcodeContainer";
       this.statusView.qrContainer.style = "padding:10px";
-      this.statusView.insertAdjacentElement("beforeend", this.statusView.qrContainer);
-      this.statusView.qrCode = new QRCode(this.statusView.qrContainer, "https://zalo.github.io/ctrl.js?id=" + this.peerId);
+      this.statusView.qrCode = new QRCode(this.statusView.qrContainer, qrCodeLink);
+
+      // Wrap it in a link for an alternate mode of sharing the connection link
+      this.statusView.qrContainerContainer = document.createElement("a");
+      this.statusView.qrContainerContainer.href = qrCodeLink;
+      this.statusView.qrContainerContainer.target = "_blank";
+      this.statusView.qrContainerContainer.insertAdjacentElement("beforeend", this.statusView.qrContainer);
+
+      // Add the QR Code to the status view!
+      this.statusView.insertAdjacentElement("beforeend", this.statusView.qrContainerContainer);
 
       // Add the status view to the page!
       document.body.insertAdjacentElement("beforeend", this.statusView);
@@ -121,7 +130,7 @@ var ctrlJsServer = function () {
     this.updatePlayerDiv = function(connection, updateText) {
       if(typeof(connection.playerDiv) !== 'undefined'){
         let bulletColor = '#00FF00';
-        // This is expensive and can lead to long recalculations!
+        // This is "expensive" and can trigger layouts!
         connection.playerDiv.style = "background-image: linear-gradient(white, gray); border: 1px solid black;";
         Object.getOwnPropertyNames(connection.buttonStates).forEach((btn) => {
           if(connection.buttonStates[btn]) {
@@ -179,7 +188,7 @@ var ctrlJsServer = function () {
       Object.getOwnPropertyNames(this.connections).forEach((peerID) => {
         this.connections[peerID].playerNum = i;
         this.connections[peerID].send({playerNum: i});
-        this.updatePlayerDiv(this.connections[peerID]);
+        this.updatePlayerDiv(this.connections[peerID], true);
         i+=1; 
       });
     }
@@ -190,14 +199,10 @@ var ctrlJsServer = function () {
     }, 5000);
   }
 
-  // Don't initialize the bookmarklet again if there's already a StatusView
-  let existingStatusView = document.getElementById("statusView");
-  if(typeof(existingStatusView) === 'undefined' || existingStatusView === null){
-    this.init();
-  } else { delete this; }
+  this.init();
 }
 
-// Initialize the server view
+// Initialize the server view on a delay
 setTimeout(()=>{
   var ctrlJs = new ctrlJsServer();
 }, 200);

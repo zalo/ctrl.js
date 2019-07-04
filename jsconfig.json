@@ -1,0 +1,13 @@
+{
+  "typeAcquisition": {
+    "include": [
+      "peerjs"
+    ]
+  },
+  "compilerOptions": {
+    "target": "es5"
+  },
+  "exclude": [ 
+    "node_modules"
+  ]
+}

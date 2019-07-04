@@ -48,7 +48,8 @@
         // Initialize ourselves as a Peer
         var myID = null;
         var peer = new Peer({
-          config: {iceServers: [{
+          config: {
+            iceServers: [{
               urls: [ "stun:ws-turn2.xirsys.com", "stun:stun.l.google.com:19302" ]
             }, {
               username: "RZyygb9oUYQFuiNJ62O1gr61l_qbtLeiyH6driGchkplknMYoj2q2loF_33bLqk9AAAAAF0c60R6YWxv",
@@ -98,7 +99,7 @@
           keypressStates[button] = true;
           console.log("Pressed " +button+"!");
           if(conn != null){
-            conn.send({ event: "press", button: button});
+            conn.send({ state: 1, btn: button});
           }
         }
         event.preventDefault();
@@ -108,7 +109,7 @@
           keypressStates[button] = false;
           console.log("Released " +button+"!");
           if(conn != null){
-            conn.send({ event: "release", button: button});
+            conn.send({ state: 0, btn: button});
           }
         }
       }

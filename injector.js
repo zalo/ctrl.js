@@ -16,6 +16,12 @@ var ctrlJsServer = function () {
 
     // Scan for iframes to inject keyboard events into...
     this.listOfIFrames = document.getElementsByTagName("iframe");
+    this.ignoreIFrames = false;
+    for(let iframe of this.listOfIFrames){
+      try { iframe.contentWindow.document;
+      } catch(err) { iframe.problematic = true; this.ignoreIFrames = true; }
+    }
+    if(this.ignoreIFrames) { this.addIFrameWarningDiv(); }
 
     // Initialize ourselves as a Peer using an RTCConfiguration object
     // Please do not use these turn servers; they are not made for high bandwidth!
@@ -83,7 +89,7 @@ var ctrlJsServer = function () {
     this.createStatusView = function(){
       // Create the StatusView div using spiffy APIs
       this.statusView = document.createElement("div", { id: 'statusView' });
-      this.statusView.style = "position:fixed; bottom:0px; right:0px; border: 1px solid black; background:white;";
+      this.statusView.style = "position:fixed; bottom:0px; right:0px; border: 1px solid black; background:white; z-index: 10002;";
       this.statusView.innerText = "Players";
 
       // Add the Players Container
@@ -134,22 +140,32 @@ var ctrlJsServer = function () {
           try {
             iframe.contentWindow.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
             iframe.contentWindow.dispatchEvent(new KeyboardEvent("keypress",  keyOptions));
-          } catch(err) {
-            iframe.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
-            iframe.dispatchEvent(new KeyboardEvent("keypress",  keyOptions));
-          }
+          } catch(err) { if(!this.ignoreIFrames){ iframe.problematic = true; this.addIFrameWarningDiv(); this.ignoreIFrames = true; } }
         }
       } else {
         window.dispatchEvent(new KeyboardEvent("keyup", keyOptions));
         for(let iframe of this.listOfIFrames){
           try {
             iframe.contentWindow.dispatchEvent(new KeyboardEvent("keyup",  keyOptions));
-          } catch(err) {
-            iframe.dispatchEvent(new KeyboardEvent("keyup",  keyOptions));
-          }
+          } catch(err) { if(!this.ignoreIFrames){ iframe.problematic = true; this.addIFrameWarningDiv(); this.ignoreIFrames = true; } }
         }
       }
     }
+
+    // Give the user an out when they hit the Cross-Origin IFrame Issue
+    this.addIFrameWarningDiv = function() {
+      this.statusView.iframeWarning = document.createElement("div", { id: "StatusIFrameWarning" });
+      this.statusView.iframeWarning.style = "border: 1px solid black;";
+      this.statusView.iframeWarning.innerHTML = "Can't send keyboard inputs into IFrame. "+
+        "Press <a href=\"javascript:ctrlJs.hideWarning();\">Okay</a> to Ignore, or Open the IFrame Directly:";
+      for(let iframe of this.listOfIFrames){
+        if(iframe.problematic){
+          this.statusView.iframeWarning.innerHTML += "\n<a href="+iframe.src+">"+iframe.id+"</a>";
+        }
+      }
+      this.statusView.insertAdjacentElement("afterbegin", this.statusView.iframeWarning);
+    }
+    this.hideWarning = function(){ this.statusView.removeChild(this.statusView.iframeWarning); }
 
     // The number of players have changed, so send updates to all of the connected clients.
     this.updatePlayerNumbers = function() {
@@ -177,5 +193,5 @@ var ctrlJsServer = function () {
 
 // Initialize the server view
 setTimeout(()=>{
-  var ctrlJsInstance = new ctrlJsServer();
+  var ctrlJs = new ctrlJsServer();
 }, 200);

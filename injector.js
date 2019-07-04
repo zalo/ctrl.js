@@ -5,6 +5,15 @@ var ctrlJsServer = function () {
     // This Instance's PeerID
     this.peerId = null;
 
+    this.defaultKeyMappings = {
+      Up:    {key: "w",     code: "KeyW",      keyCode: 87},
+      Left:  {key: "a",     code: "KeyA",      keyCode: 65},
+      Down:  {key: "s",     code: "KeyS",      keyCode: 83},
+      Right: {key: "d",     code: "KeyD",      keyCode: 68},
+      A:     {key: " ",     code: "Space",     keyCode: 32},
+      B:     {key: "Shift", code: "ShiftLeft", keyCode: 16}
+    }
+
     // Initialize ourselves as a Peer using an RTCConfiguration object
     // Please do not use these turn servers; they are not made for high bandwidth!
     this.peer = new Peer({
@@ -43,8 +52,12 @@ var ctrlJsServer = function () {
         connection.on('data', (data) => {
           if("pingTime" in data){ connection.send(data); }
           if("playerName" in data){ connection.playerName = data.playerName; }
-          if("btn" in data) { connection.buttonStates[data.btn] = data.state; }
+          if("btn" in data) {
+             connection.buttonStates[data.btn] = data.state;
+             this.spoofKeyboardEvent(connection, data.btn, data.state);
+          }
 
+          // Apply the visual flourishes
           this.updatePlayerDiv(connection);
 
           // Append this packet to the debug history if it exists...
@@ -100,6 +113,17 @@ var ctrlJsServer = function () {
               connection.playerDiv.style = "background-image: linear-gradient(gray, white); border: 1px solid black;";
             } });
         connection.playerDiv.innerHTML = '<font style="color:'+bulletColor+';font-weight:bold;font-size:1.5em"> + </font>' + connection.playerNum + ' - ' + connection.playerName;
+      }
+    }
+    this.spoofKeyboardEvent = function(connection, button, state) {
+      //let mapping = this.defaultKeyMappings[button];
+      //let keyOptions = { key: mapping.key, code: mapping.code };
+
+      if(state){
+        document.dispatchEvent(new KeyboardEvent("keydown",  this.defaultKeyMappings[button]));
+        document.dispatchEvent(new KeyboardEvent("keypress", this.defaultKeyMappings[button]));
+      }else{
+        document.dispatchEvent(new KeyboardEvent("keyup",    this.defaultKeyMappings[button]));
       }
     }
 

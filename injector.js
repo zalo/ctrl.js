@@ -14,6 +14,9 @@ var ctrlJsServer = function () {
       B:     {key: "Shift", code: "ShiftLeft", keyCode: 16}
     }
 
+    // Scan for iframes to inject keyboard events into...
+    this.listOfIFrames = document.getElementsByTagName("iframe");
+
     // Initialize ourselves as a Peer using an RTCConfiguration object
     // Please do not use these turn servers; they are not made for high bandwidth!
     this.peer = new Peer({
@@ -53,11 +56,12 @@ var ctrlJsServer = function () {
           if("pingTime" in data){ connection.send(data); }
           if("playerName" in data){
              connection.playerName = data.playerName; 
-             this.updatePlayerDiv(connection);
+             this.updatePlayerDiv(connection, true);
           }
           if("btn" in data) {
              connection.buttonStates[data.btn] = data.state;
              this.spoofKeyboardEvent(connection, data.btn, data.state);
+             this.updatePlayerDiv(connection, false);
           }
 
           // Append this packet to the debug history if it exists...
@@ -104,16 +108,19 @@ var ctrlJsServer = function () {
       connection.playerDiv.innerHTML = "New Player";
       this.statusView.players.insertAdjacentElement("beforeend", connection.playerDiv);
     }
-    this.updatePlayerDiv = function(connection) {
+    this.updatePlayerDiv = function(connection, updateText) {
       if(typeof(connection.playerDiv) !== 'undefined'){
         let bulletColor = '#00FF00';
         // This is expensive and can lead to long recalculations!
-        /*connection.playerDiv.style = "background-image: linear-gradient(white, gray); border: 1px solid black;";
+        connection.playerDiv.style = "background-image: linear-gradient(white, gray); border: 1px solid black;";
         Object.getOwnPropertyNames(connection.buttonStates).forEach((btn) => {
-           if(connection.buttonStates[btn]) {
-              connection.playerDiv.style = "background-image: linear-gradient(gray, white); border: 1px solid black;";
-            } });*/
-        connection.playerDiv.innerHTML = '<font style="color:'+bulletColor+';font-weight:bold;font-size:1.5em"> + </font>' + connection.playerNum + ' - ' + connection.playerName;
+          if(connection.buttonStates[btn]) {
+            connection.playerDiv.style = "background-image: linear-gradient(gray, white); border: 1px solid black;";
+          }
+        });
+        if(updateText){
+          connection.playerDiv.innerHTML = '<font style="color:'+bulletColor+';font-weight:bold;font-size:1.5em"> + </font>' + connection.playerNum + ' - ' + connection.playerName;
+        }
       }
     }
     this.spoofKeyboardEvent = function(connection, button, state) {
@@ -123,11 +130,15 @@ var ctrlJsServer = function () {
       if(state){
         window.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
         window.dispatchEvent(new KeyboardEvent("keypress", keyOptions));
-        document.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
-        document.dispatchEvent(new KeyboardEvent("keypress", keyOptions));
-      }else{
+        this.listOfIFrames.forEach((iframe)=>{
+          iframe.contentWindow.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
+          iframe.contentWindow.dispatchEvent(new KeyboardEvent("keypress",  keyOptions));
+        });
+      } else {
         window.dispatchEvent(new KeyboardEvent("keyup", keyOptions));
-        document.dispatchEvent(new KeyboardEvent("keyup", keyOptions));
+        this.listOfIFrames.forEach((iframe)=>{
+          iframe.contentWindow.dispatchEvent(new KeyboardEvent("keyup",  keyOptions));
+        });
       }
     }
 
@@ -141,6 +152,11 @@ var ctrlJsServer = function () {
         i+=1; 
       });
     }
+
+    // Rescan for iframes that have been added since the bookmarklet was loaded
+    this.iframeScanner = setInterval(()=>{
+      this.listOfIFrames = document.getElementsByTagName("iframe");
+    }, 5000);
   }
 
   // Don't initialize the bookmarklet again if there's already a StatusView

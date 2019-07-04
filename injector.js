@@ -51,14 +51,14 @@ var ctrlJsServer = function () {
         });
         connection.on('data', (data) => {
           if("pingTime" in data){ connection.send(data); }
-          if("playerName" in data){ connection.playerName = data.playerName; }
+          if("playerName" in data){
+             connection.playerName = data.playerName; 
+             this.updatePlayerDiv(connection);
+          }
           if("btn" in data) {
              connection.buttonStates[data.btn] = data.state;
              this.spoofKeyboardEvent(connection, data.btn, data.state);
           }
-
-          // Apply the visual flourishes
-          this.updatePlayerDiv(connection);
 
           // Append this packet to the debug history if it exists...
           let history = document.getElementById("eventHistory");
@@ -107,11 +107,12 @@ var ctrlJsServer = function () {
     this.updatePlayerDiv = function(connection) {
       if(typeof(connection.playerDiv) !== 'undefined'){
         let bulletColor = '#00FF00';
-        connection.playerDiv.style = "background-image: linear-gradient(white, gray); border: 1px solid black;";
+        // This is expensive and can lead to long recalculations!
+        /*connection.playerDiv.style = "background-image: linear-gradient(white, gray); border: 1px solid black;";
         Object.getOwnPropertyNames(connection.buttonStates).forEach((btn) => {
            if(connection.buttonStates[btn]) {
               connection.playerDiv.style = "background-image: linear-gradient(gray, white); border: 1px solid black;";
-            } });
+            } });*/
         connection.playerDiv.innerHTML = '<font style="color:'+bulletColor+';font-weight:bold;font-size:1.5em"> + </font>' + connection.playerNum + ' - ' + connection.playerName;
       }
     }
@@ -122,8 +123,11 @@ var ctrlJsServer = function () {
       if(state){
         document.dispatchEvent(new KeyboardEvent("keydown",  this.defaultKeyMappings[button]));
         document.dispatchEvent(new KeyboardEvent("keypress", this.defaultKeyMappings[button]));
+        window  .dispatchEvent(new KeyboardEvent("keydown",  this.defaultKeyMappings[button]));
+        window  .dispatchEvent(new KeyboardEvent("keypress", this.defaultKeyMappings[button]));
       }else{
         document.dispatchEvent(new KeyboardEvent("keyup",    this.defaultKeyMappings[button]));
+        window  .dispatchEvent(new KeyboardEvent("keyup",    this.defaultKeyMappings[button]));
       }
     }
 

@@ -131,13 +131,22 @@ var ctrlJsServer = function () {
         window.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
         window.dispatchEvent(new KeyboardEvent("keypress", keyOptions));
         for(let iframe of this.listOfIFrames){
-          iframe.contentWindow.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
-          iframe.contentWindow.dispatchEvent(new KeyboardEvent("keypress",  keyOptions));
+          try {
+            iframe.contentWindow.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
+            iframe.contentWindow.dispatchEvent(new KeyboardEvent("keypress",  keyOptions));
+          } catch(err) {
+            iframe.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
+            iframe.dispatchEvent(new KeyboardEvent("keypress",  keyOptions));
+          }
         }
       } else {
         window.dispatchEvent(new KeyboardEvent("keyup", keyOptions));
         for(let iframe of this.listOfIFrames){
-          iframe.contentWindow.dispatchEvent(new KeyboardEvent("keyup",  keyOptions));
+          try {
+            iframe.contentWindow.dispatchEvent(new KeyboardEvent("keyup",  keyOptions));
+          } catch(err) {
+            iframe.dispatchEvent(new KeyboardEvent("keyup",  keyOptions));
+          }
         }
       }
     }

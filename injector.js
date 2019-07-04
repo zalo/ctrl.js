@@ -1,20 +1,41 @@
+// The default keymappings...
+// TODO: Store these per-player and in localStorage!
+var defaultKeyMappings = [{
+  Up:    {key: "w",     code: "KeyW",      keyCode: 87},
+  Left:  {key: "a",     code: "KeyA",      keyCode: 65},
+  Down:  {key: "s",     code: "KeyS",      keyCode: 83},
+  Right: {key: "d",     code: "KeyD",      keyCode: 68},
+  A:     {key: " ",     code: "Space",     keyCode: 32},
+  B:     {key: "Shift", code: "ShiftLeft", keyCode: 16}
+},{
+  Up:    {key: "w",     code: "KeyW",      keyCode: 87},
+  Left:  {key: "a",     code: "KeyA",      keyCode: 65},
+  Down:  {key: "s",     code: "KeyS",      keyCode: 83},
+  Right: {key: "d",     code: "KeyD",      keyCode: 68},
+  A:     {key: " ",     code: "Space",     keyCode: 32},
+  B:     {key: "Shift", code: "ShiftLeft", keyCode: 16}
+},{
+  Up:    {key: "w",     code: "KeyW",      keyCode: 87},
+  Left:  {key: "a",     code: "KeyA",      keyCode: 65},
+  Down:  {key: "s",     code: "KeyS",      keyCode: 83},
+  Right: {key: "d",     code: "KeyD",      keyCode: 68},
+  A:     {key: " ",     code: "Space",     keyCode: 32},
+  B:     {key: "Shift", code: "ShiftLeft", keyCode: 16}
+},{
+  Up:    {key: "w",     code: "KeyW",      keyCode: 87},
+  Left:  {key: "a",     code: "KeyA",      keyCode: 65},
+  Down:  {key: "s",     code: "KeyS",      keyCode: 83},
+  Right: {key: "d",     code: "KeyD",      keyCode: 68},
+  A:     {key: " ",     code: "Space",     keyCode: 32},
+  B:     {key: "Shift", code: "ShiftLeft", keyCode: 16}
+}];
+
 var ctrlJsServer = function () {
   this.init = function(){
     // The Connection Objects Keyed by the Peer IDs
     this.connections = {};
     // This Instance's PeerID
     this.peerId = null;
-
-    // The default keymappings...
-    // TODO: Store these per-player and in localStorage!
-    this.defaultKeyMappings = {
-      Up:    {key: "w",     code: "KeyW",      keyCode: 87},
-      Left:  {key: "a",     code: "KeyA",      keyCode: 65},
-      Down:  {key: "s",     code: "KeyS",      keyCode: 83},
-      Right: {key: "d",     code: "KeyD",      keyCode: 68},
-      A:     {key: " ",     code: "Space",     keyCode: 32},
-      B:     {key: "Shift", code: "ShiftLeft", keyCode: 16}
-    }
 
     // Initialize ourselves as a Peer using an RTCConfiguration object
     // Please do not use these turn servers; they are not made for high bandwidth!
@@ -57,8 +78,8 @@ var ctrlJsServer = function () {
           this.connections[connection.peer] = connection;
           console.log('I have seen that: ' + connection.peer + " has successfully connected!");
           connection.buttonStates = {};
+          this.updatePlayerNumbers(false);
           this.addPlayerDiv(connection);
-          this.updatePlayerNumbers();
         });
         connection.on('data', (data) => {
           if("pingTime" in data){ connection.send(data); }
@@ -92,7 +113,7 @@ var ctrlJsServer = function () {
       // Create the StatusView div using spiffy APIs
       this.statusView = document.createElement("div");
       this.statusView.id = "statusView";
-      this.statusView.style = "position:fixed; bottom:0px; right:0px; border: 1px solid black; background:white; z-index: 10002;";
+      this.statusView.style = "position:fixed; bottom:0px; right:0px; color:#000000; border: 1px solid black; background:white; z-index: 10002;";
       this.statusView.innerText = "Players";
 
       // Add the Player's Container
@@ -121,14 +142,56 @@ var ctrlJsServer = function () {
       document.body.insertAdjacentElement("beforeend", this.statusView);
     }
 
-    // Manage the player statuses
+    // Create the Player Status (with Keyboard Maps)
     this.addPlayerDiv = function(connection) {
       connection.playerDiv = document.createElement("div");
       connection.playerDiv.id = connection.peer+"'s Player Status";
-      connection.playerDiv.style = "background-image: linear-gradient(white, gray); border: 1px solid black;";
-      connection.playerDiv.innerHTML = "New Player";
+
+      connection.playerDiv.settings = document.createElement("div");
+      connection.playerDiv.settings.style = "display: none;";
+      connection.playerDiv.settings.open = false;
+      connection.playerDiv.label = document.createElement("label");
+      connection.playerDiv.label.style = "position: relative; padding:2px; display: block; background-image: linear-gradient(white, gray); border: 1px solid black;text-shadow: 0px 0px 2px slategrey;";
+      connection.playerDiv.label.innerHTML = '<font style="color:#00cc00;font-weight:bold;font-size:1.25em;">P' + connection.playerNum + '</font>' + ' - NewPlayer';
+      connection.playerDiv.label.settings = connection.playerDiv.settings;
+      connection.playerDiv.label.onclick = function() {
+        this.settings.open = !this.settings.open;
+        this.settings.style = this.settings.open ? "display: block;" : "display: none;";
+      }
+
+      connection.playerDiv.settings.content = document.createElement("div");
+      connection.playerDiv.settings.content.style = "background: white;width: auto; display: block; padding:2px;";
+      connection.playerDiv.settings.content.innerHTML = "Keybindings";
+      connection.playerDiv.settings.content.buttons = [];
+
+      // Create the List of Keys to Map
+      Object.getOwnPropertyNames(defaultKeyMappings[connection.playerNum]).forEach((buttonName) => {
+        let listItem = document.createElement("li"); listItem.innerText = buttonName+": ";
+        let button = document.createElement("button"); button.innerText = defaultKeyMappings[connection.playerNum][buttonName].code;
+        button.name = buttonName; button.connection = connection;
+        listItem.insertAdjacentElement("beforeend", button);
+        connection.playerDiv.settings.content.insertAdjacentElement("beforeend", listItem);
+
+        // Define the Button's Keyboard Binding Callback
+        button.keyDownFunction = function(event){
+          defaultKeyMappings[this.connection.playerNum][this.name] = event;
+          this.innerText = defaultKeyMappings[this.connection.playerNum][this.name].code;
+          document.removeEventListener("keydown", this.keyDownFunction);
+        }.bind(button);
+        button.onclick = function() {
+          this.innerText = "Waiting for keypress...";
+          document.addEventListener('keydown', button.keyDownFunction, false);
+        }
+        connection.playerDiv.settings.content.buttons.push(button);
+      });
+      connection.playerDiv.settings.insertAdjacentElement("beforeend", connection.playerDiv.settings.content);
+
+      connection.playerDiv.insertAdjacentElement("beforeend", connection.playerDiv.label);
+      connection.playerDiv.insertAdjacentElement("beforeend", connection.playerDiv.settings);
       this.statusView.players.insertAdjacentElement("beforeend", connection.playerDiv);
     }
+
+    // Update the Player Status
     this.updatePlayerDiv = function(connection, updateText) {
       if(typeof(connection.playerDiv) !== 'undefined'){
         // This is "expensive" and can trigger layouts!
@@ -139,20 +202,22 @@ var ctrlJsServer = function () {
           }
         });
         if(updateText){
-          connection.playerDiv.innerHTML = '<font style="color:#00cc00;font-weight:bold;font-size:1.25em">P' + connection.playerNum + '</font>' + ' - ' + connection.playerName;
+          connection.playerDiv.label.innerHTML = '<font style="color:#00cc00;font-weight:bold;font-size:1.25em">P' + (connection.playerNum+1) + '</font>' + ' - ' + connection.playerName;
+          for(button of connection.playerDiv.settings.content.buttons){
+            button.innerText = defaultKeyMappings[connection.playerNum][button.name].code;
+          }
         }
       }
     }
 
     // Handle injecting the keyboard events into the page...
-    // TODO: Inject the events according to the specific connection playerNum's keymapping...
     this.spoofKeyboardEvent = function(connection, button, state) {
-      let mapping = this.defaultKeyMappings[button];
+      let mapping = defaultKeyMappings[connection.playerNum][button];
       let keyOptions = { key: mapping.key, code: mapping.code, keyCode: mapping.keyCode, bubbles: true, cancelable: false };
 
       if(state){
-        window.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
-        window.dispatchEvent(new KeyboardEvent("keypress", keyOptions));
+        document.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
+        document.dispatchEvent(new KeyboardEvent("keypress", keyOptions));
         for(let iframe of this.listOfIFrames){
           try {
             iframe.contentWindow.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
@@ -160,7 +225,7 @@ var ctrlJsServer = function () {
           } catch(err) { if(!this.ignoreIFrames){ iframe.problematic = true; this.addIFrameWarningDiv(); this.ignoreIFrames = true; } }
         }
       } else {
-        window.dispatchEvent(new KeyboardEvent("keyup", keyOptions));
+        document.dispatchEvent(new KeyboardEvent("keyup", keyOptions));
         for(let iframe of this.listOfIFrames){
           try {
             iframe.contentWindow.dispatchEvent(new KeyboardEvent("keyup",  keyOptions));
@@ -187,12 +252,12 @@ var ctrlJsServer = function () {
     this.hideWarning = function(){ this.statusView.removeChild(this.statusView.iframeWarning); }
 
     // The number of players have changed, so send updates to all of the connected clients.
-    this.updatePlayerNumbers = function() {
-      let i = 1; 
+    this.updatePlayerNumbers = function(updateDiv = true) {
+      let i = 0; 
       Object.getOwnPropertyNames(this.connections).forEach((peerID) => {
         this.connections[peerID].playerNum = i;
         this.connections[peerID].send({playerNum: i});
-        this.updatePlayerDiv(this.connections[peerID], true);
+        if(updateDiv){ this.updatePlayerDiv(this.connections[peerID], true); }
         i+=1; 
       });
     }

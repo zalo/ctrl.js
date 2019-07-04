@@ -78,7 +78,7 @@
           conn.on('data', function(data) {
             if("playerNum" in data){ playerNumber = data.playerNum; }
             if("pingTime" in data){
-              let pingMsg = "Player " + playerNumber + " - Ping: " + Math.round(performance.now() - data.pingTime) +"ms";
+              let pingMsg = "Player " + (playerNumber+1) + " - Ping: " + Math.round(performance.now() - data.pingTime) +"ms";
               document.getElementById("Status").innerText = pingMsg;
             }else{
               console.log('Received', data);

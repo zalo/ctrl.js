@@ -130,15 +130,15 @@ var ctrlJsServer = function () {
       if(state){
         window.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
         window.dispatchEvent(new KeyboardEvent("keypress", keyOptions));
-        this.listOfIFrames.forEach((iframe)=>{
+        for(let iframe of this.listOfIFrames){
           iframe.contentWindow.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
           iframe.contentWindow.dispatchEvent(new KeyboardEvent("keypress",  keyOptions));
-        });
+        }
       } else {
         window.dispatchEvent(new KeyboardEvent("keyup", keyOptions));
-        this.listOfIFrames.forEach((iframe)=>{
+        for(let iframe of this.listOfIFrames){
           iframe.contentWindow.dispatchEvent(new KeyboardEvent("keyup",  keyOptions));
-        });
+        }
       }
     }
 
@@ -167,4 +167,6 @@ var ctrlJsServer = function () {
 }
 
 // Initialize the server view
-var ctrlJsInstance = new ctrlJsServer();
+setTimeout(()=>{
+  var ctrlJsInstance = new ctrlJsServer();
+}, 200);

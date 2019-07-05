@@ -59,7 +59,7 @@ var ctrlJsServer = function () {
     this.peer = new Peer({
       config: {
         iceServers: [{
-          urls: [ "stun:ws-turn2.xirsys.com", "stun:stun.l.google.com:19302" ]
+          urls: [ "stun:stun.l.google.com:19302", "stun:ws-turn2.xirsys.com" ]
         }, {
           username: "RZyygb9oUYQFuiNJ62O1gr61l_qbtLeiyH6driGchkplknMYoj2q2loF_33bLqk9AAAAAF0c60R6YWxv",
           credential: "44ba5ddc-9dbb-11e9-997a-a695319b0c25",
@@ -292,6 +292,14 @@ var ctrlJsServer = function () {
     this.iframeScanner = setInterval(()=>{
       this.listOfIFrames = document.getElementsByTagName("iframe");
     }, 5000);
+
+    // Clean up the connections before the page exits
+    window.addEventListener("beforeunload", function(event) {
+      Object.getOwnPropertyNames(this.connections).forEach((peerID) => {
+        this.connections[peerID].close();
+      });
+      if(this.peer !== null){ this.peer.close(); }
+    });
   }
 
   this.init();

@@ -3,14 +3,14 @@
     <title>ctrl.js Controller</title>
     <meta name="viewport" content="width=device-width, user-scalable=no" />
     <meta charset="UTF-8">
-    <script type="text/javascript" src="peerjs.min.js"></script>
-    <script type="text/javascript" src="three.min.js"></script>
-    <script type="text/javascript" src="controllerConnection.js"></script>
+    <script type="text/javascript" src="/src/peerjs.min.js"></script>
+    <script type="text/javascript" src="/src/controller/three.min.js"></script>
+    <script type="text/javascript" src="/src/controller/controllerConnection.js"></script>
   </head>
 
   <body style="overflow: hidden; height: auto; width: auto;">
     <input id="PlayerName" type="text" placeholder="Player Name" onchange="controller.ctrljs.setPlayerName();" oninput="this.onchange();" style="z-index: 10004;position: absolute"></input>
     <div id="Status" style="color:white;z-index: 10003;position: absolute;top:2em;">Connecting...</div>
-    <script type="text/javascript" src="controller.js"></script>
+    <script type="text/javascript" src="/src/controller/controller.js"></script>
   </body>
 </html>

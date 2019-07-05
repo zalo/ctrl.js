@@ -6,8 +6,11 @@ setTimeout(()=>{
   // Don't initialize the bookmarklet again if there's already a StatusView
   let existingStatusView = document.getElementById("statusView");
   if(typeof(existingStatusView) === 'undefined' || existingStatusView === null){
-    var i, s, ss = ['https://zalo.github.io/ctrl.js/peerjs.min.js', 'https://zalo.github.io/ctrl.js/qrcode.min.js', 'https://zalo.github.io/ctrl.js/injector.js'];
-    //var i, s, ss = ['peerjs.min.js', 'qrcode.min.js', 'Injector.js']; // The local testing version...
+    var i, s, ss = [
+      'https://zalo.github.io/ctrl.js/src/peerjs.min.js', 
+      'https://zalo.github.io/ctrl.js/src/bookmarklet/qrcode.min.js', 
+      'https://zalo.github.io/ctrl.js/src/bookmarklet/injector.js'];
+    //var i, s, ss = ['/src/peerjs.min.js', '/src/bookmarklet/qrcode.min.js', '/src/bookmarklet/injector.js']; // The local testing version...
     for (i = 0; i != ss.length; i++) {
       s = document.createElement('script');
       s.src = ss[i];

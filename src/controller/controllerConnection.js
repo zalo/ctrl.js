@@ -53,6 +53,7 @@ var CreateCtrlJsControllerConnection = function () {
       this.pingLoop = this.measurePingPeriodically();
     });
     this.conn.on('close', () => {
+      document.getElementById("Status").innerText = "Disconnected; perhaps the server shut down?!";
       console.log("Disconnected; perhaps the server shut down?");
       this.connected = false;
       clearInterval(this.pingLoop);
@@ -89,7 +90,7 @@ var CreateCtrlJsControllerConnection = function () {
 
   // Handle leaving the window gracefully
   // Clean up connection; This appears to be a futile gesture...
-  window.addEventListener("beforeunload", function(event) {
+  window.addEventListener("beforeunload", function() {
     if(this.conn !== null){ this.conn.close(); }
     if(this.peer !== null){ this.peer.close(); }
   });

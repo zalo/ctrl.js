@@ -2,6 +2,7 @@ var CreateCtrlJsController = function () {
   this.time = new THREE.Clock();
   this.lastTimeRendered = 0.0;
   this.viewDirty = true;
+  this.moveArrowButtons = false;
 
   this.currentTouches = {};
 
@@ -37,12 +38,12 @@ var CreateCtrlJsController = function () {
     //Create the controller object
     this.controllerBody = this.createWhiteSphere(null, 0,0,0, 1,0.45,0.1, 16, 0xffffff);
     this.fontLoader = new THREE.FontLoader();
-    this.fontLoader.load( 'optimer_bold.typeface.json', (font) => {
+    this.fontLoader.load( '/src/controller/optimer_bold.typeface.json', (font) => {
       this.font = font;
       this.buttons = [];
-      this.A      = this.createWhiteSphere(this.buttons, 17.5, -4, 3.0, 0.15,0.15,0.05, 8, 0x0000ff, "A");
-      this.B      = this.createWhiteSphere(this.buttons,  7.5, -4, 3.0, 0.15,0.15,0.05, 8, 0x00ff00, "B");
-      this.Start  = this.createWhiteSphere(this.buttons,  0  ,  5, 3.0, 0.1, 0.1, 0.05, 8, 0xff0000, "START", 10);
+      this.A      = this.createWhiteSphere(this.buttons, 17.5, -4, 3.0, 0.15, 0.15, 0.05, 8, 0x0000ff, "A");
+      this.B      = this.createWhiteSphere(this.buttons,  7.5, -4, 3.0, 0.15, 0.15, 0.05, 8, 0x00ff00, "B");
+      this.Start  = this.createWhiteSphere(this.buttons,  0  ,  5, 3.0, 0.1,   0.1, 0.05, 8, 0xff0000, "START", 10);
       this.Up     = this.createWhiteSphere(this.buttons, -12 ,  0, 3.0, 0.175, 0.1, 0.05, 8, 0x888888, "^");
       this.Down   = this.createWhiteSphere(this.buttons, -12 , -8, 3.0, 0.175, 0.1, 0.05, 8, 0x888888, "v");
       this.Left   = this.createWhiteSphere(this.buttons, -16 , -4, 3.0, 0.1, 0.175, 0.05, 8, 0x888888, "<");
@@ -185,18 +186,20 @@ var CreateCtrlJsController = function () {
     
         // First move the directional buttons (if applicable)
         // TODO: Just renormalize the next ray to start within the center of the buttons...
-        this.raycaster.setFromCamera( this.touchToRay(touch.startX, touch.startY), this.camera );
-        let intersections = this.raycaster.intersectObjects( [this.controllerBody] );//this.scene.children );
-        if(intersections.length > 0 && intersections[0].object === this.controllerBody){
-          if(intersections[0].point.x < -4.0){
-            let curAverage   = this.Up.position.clone().add(this.Down.position).add(this.Left.position).add(this.Right.position).divideScalar(4.0);
-            let displacement = intersections[0].point.sub(curAverage);
+        if(this.moveArrowButtons){
+          this.raycaster.setFromCamera( this.touchToRay(touch.startX, touch.startY), this.camera );
+          let intersections = this.raycaster.intersectObjects( [this.controllerBody] );//this.scene.children );
+          if(intersections.length > 0 && intersections[0].object === this.controllerBody){
+            if(intersections[0].point.x < -4.0){
+              let curAverage   = this.Up.position.clone().add(this.Down.position).add(this.Left.position).add(this.Right.position).divideScalar(4.0);
+              let displacement = intersections[0].point.sub(curAverage);
 
-            this.Up.position.add(displacement);
-            this.Down.position.add(displacement);
-            this.Left.position.add(displacement);
-            this.Right.position.add(displacement);
-            //this.Center.position.add(displacement);
+              this.Up.position.add(displacement);
+              this.Down.position.add(displacement);
+              this.Left.position.add(displacement);
+              this.Right.position.add(displacement);
+              //this.Center.position.add(displacement);
+            }
           }
         }
 
@@ -234,7 +237,10 @@ var CreateCtrlJsController = function () {
     requestAnimationFrame(() => this.animate());
     //Set up a lazy render loop where it only renders if it's been interacted with in the last second
     if (this.viewDirty) { this.lastTimeRendered = this.time.getElapsedTime(); this.viewDirty = false; }
-    if (this.time.getElapsedTime() - this.lastTimeRendered < 0.2) { this.renderer.render(this.scene, this.camera); }
+    if (this.time.getElapsedTime() - this.lastTimeRendered < 0.2) {
+      if(!this.ctrljs.connected) { this.scene.background = new THREE.Color(0xff0000); }
+      this.renderer.render(this.scene, this.camera); 
+    }
   };
 
   this.init();

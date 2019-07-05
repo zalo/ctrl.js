@@ -294,7 +294,7 @@ var ctrlJsServer = function () {
     }, 5000);
 
     // Clean up the connections before the page exits
-    window.addEventListener("beforeunload", function(event) {
+    window.addEventListener("beforeunload", function() {
       Object.getOwnPropertyNames(this.connections).forEach((peerID) => {
         this.connections[peerID].close();
       });

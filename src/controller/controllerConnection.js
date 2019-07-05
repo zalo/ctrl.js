@@ -105,8 +105,8 @@ var CreateCtrlJsControllerConnection = function (updateView) {
   window.addEventListener("beforeunload", function() {
     if(this.conn !== null){
       this.conn.send({connected: false});
-      this.conn.close(); 
+      //this.conn.close(); 
     }
-    if(this.peer !== null){ this.peer.close(); }
+    //if(this.peer !== null){ this.peer.close(); }
   });
 }

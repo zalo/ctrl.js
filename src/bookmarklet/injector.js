@@ -305,9 +305,9 @@ var ctrlJsServer = function () {
     window.addEventListener("beforeunload", function() {
       Object.getOwnPropertyNames(this.connections).forEach((peerID) => {
         this.connections[peerID].send({connected: false});
-        this.connections[peerID].close();
+        //this.connections[peerID].close();
       });
-      if(this.peer !== null){ this.peer.close(); }
+      //if(this.peer !== null){ this.peer.close(); }
     });
   }
 

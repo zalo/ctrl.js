@@ -12,8 +12,8 @@ var CreateCtrlJsController = function () {
     //curCanvas.id = canvasId;
     this.parentNode = document.currentScript.parentNode;
     this.parentNode.insertBefore(this.curCanvas, document.currentScript.nextSibling);
-    this.renderer = new THREE.WebGLRenderer({ canvas: this.curCanvas, antialias: false });
-    this.renderer.setPixelRatio(2);
+    this.renderer = new THREE.WebGLRenderer({ canvas: this.curCanvas, antialias: true });
+    this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.shadowMap.enabled = true;
     this.setSize();
     window.addEventListener('resize', this.setSize, false);
@@ -27,7 +27,7 @@ var CreateCtrlJsController = function () {
     this.scene.background = new THREE.Color(0x000000);//0xa0a0a0
     //this.scene.fog = new THREE.Fog(0x000000, 200, 600);//0xa0a0a0
     this.light = new THREE.HemisphereLight(0xffffff, 0x444444);
-    this.light.position.set(0, 200, 0);
+    this.light.position.set(100, 100, 0);
     this.scene.add(this.light);
 
     //Create the controller object
@@ -39,10 +39,10 @@ var CreateCtrlJsController = function () {
       this.A      = this.createWhiteSphere(this.buttons, 17.5, -4, 3.0, 0.15,0.15,0.05, 8, 0x0000ff, "A");
       this.B      = this.createWhiteSphere(this.buttons,  7.5, -4, 3.0, 0.15,0.15,0.05, 8, 0x00ff00, "B");
       this.Start  = this.createWhiteSphere(this.buttons,  0  ,  5, 3.0, 0.1, 0.1, 0.05, 8, 0xff0000, "START", 10);
-      this.Up     = this.createWhiteSphere(this.buttons, -12 ,  0, 3.0, 0.15, 0.1, 0.05, 8, 0x888888, "^");
-      this.Down   = this.createWhiteSphere(this.buttons, -12 , -8, 3.0, 0.15, 0.1, 0.05, 8, 0x888888, "v");
-      this.Left   = this.createWhiteSphere(this.buttons, -16 , -4, 3.0, 0.1, 0.15, 0.05, 8, 0x888888, "<");
-      this.Right  = this.createWhiteSphere(this.buttons, -8  , -4, 3.0, 0.1, 0.15, 0.05, 8, 0x888888, ">");
+      this.Up     = this.createWhiteSphere(this.buttons, -12 ,  0, 3.0, 0.175, 0.1, 0.05, 8, 0x888888, "^");
+      this.Down   = this.createWhiteSphere(this.buttons, -12 , -8, 3.0, 0.175, 0.1, 0.05, 8, 0x888888, "v");
+      this.Left   = this.createWhiteSphere(this.buttons, -16 , -4, 3.0, 0.1, 0.175, 0.05, 8, 0x888888, "<");
+      this.Right  = this.createWhiteSphere(this.buttons, -8  , -4, 3.0, 0.1, 0.175, 0.05, 8, 0x888888, ">");
       //this.Center = this.createWhiteSphere(this.buttons, -12 , -4, 2.2, 0.1,  0.1, 0.05, 8, 0x888888);
     } );
 
@@ -66,6 +66,7 @@ var CreateCtrlJsController = function () {
       this.parentHeight = window.innerHeight;//this.parentNode.getBoundingClientRect().height;
       this.renderer.setSize(this.parentWidth, this.parentHeight);
       this.camera.aspect = this.parentWidth / this.parentHeight;
+      this.camera.fov = 90 / this.camera.aspect;
       this.camera.updateProjectionMatrix();
       this.viewDirty = true;
     }, 200);

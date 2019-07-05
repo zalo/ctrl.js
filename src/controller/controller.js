@@ -239,7 +239,7 @@ var CreateCtrlJsController = function () {
     //Set up a lazy render loop where it only renders if it's been interacted with in the last second
     if (this.viewDirty) { this.lastTimeRendered = this.time.getElapsedTime(); this.viewDirty = false; }
     if (this.time.getElapsedTime() - this.lastTimeRendered < 0.2) {
-      this.scene.background = this.ctrljs.connected ? new THREE.Color(0x000000) : new THREE.Color(0xff0000);
+      this.scene.background = this.ctrljs.disconnected ? new THREE.Color(0x000000) : new THREE.Color(0xff0000);
       this.renderer.render(this.scene, this.camera); 
     }
   };

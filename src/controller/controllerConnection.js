@@ -4,7 +4,7 @@ var CreateCtrlJsControllerConnection = function (updateView) {
   this.playerName = localStorage.getItem('ctrljsPlayerName');
   this.playerNameElement = document.getElementById("PlayerName");
   this.playerNameElement.value = this.playerName;
-  this.connected = false;
+  this.connected = false; this.disconnected = false;
   this.updateView = updateView;
 
   // Read the connecting ID from the URL
@@ -67,6 +67,7 @@ var CreateCtrlJsControllerConnection = function (updateView) {
       document.getElementById("Status").innerText = "Disconnected; perhaps the server shut down?!";
       console.log("Disconnected; perhaps the server shut down?");
       this.connected = false;
+      this.disconnected = true;
       clearInterval(this.pingLoop);
       this.updateView();
     });

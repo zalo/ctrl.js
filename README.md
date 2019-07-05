@@ -2,7 +2,7 @@
 
 A bookmarklet for using phones as impromptu controllers in browser-based "local" multiplayer games.
 
-Save this bookmarklet to your browser:
+Save <a href="javascript:{var s=document.createElement('script');s.src='https://zalo.github.io/ctrl.js/bookmarklet.js',document.body.appendChild(s);};void(0);">this bookmarklet</a> to your browser:
 ```
 javascript:{var s=document.createElement("script");s.src="https://zalo.github.io/ctrl.js/bookmarklet.js",document.body.appendChild(s);};void(0);
 ```
@@ -24,7 +24,7 @@ The current default button mapping is:
 
 ## Testing
 
-[Debug Test](https://zalo.github.io/ctrl.js/testServer.html) - Scan the marker with your phone's camera app to test connectivity and receipt of events.
+[Debug Test](https://zalo.github.io/ctrl.js/src/bookmarklet/testServer.html) - Scan the marker with your phone's camera app to test connectivity and receipt of events.
 
 
 ## Credits

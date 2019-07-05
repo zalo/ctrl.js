@@ -1,4 +1,4 @@
-# [ctrl.js](https://zalo.github.io/ctrl.js/src/bookmarklet/faq.html)
+# [ctrl.js](https://zalo.github.io/ctrl.js/)
 
 A bookmarklet for using phones as impromptu controllers in browser-based "local" multiplayer games.
 

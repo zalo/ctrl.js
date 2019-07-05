@@ -14,7 +14,7 @@ var CreateCtrlJsController = function () {
 
     // Set up the Renderer
     this.curCanvas = document.createElement('canvas');
-    this.curCanvas.style = "position:fixed; top:0px; left:0px;z-index: 1;";
+    this.curCanvas.style = "position:fixed; top:0px; left:0px; bottom:0px; right:0px; z-index: 1;";
     //curCanvas.id = canvasId;
     this.parentNode.insertBefore(this.curCanvas, document.currentScript.nextSibling);
     this.renderer = new THREE.WebGLRenderer({ canvas: this.curCanvas, antialias: true });
@@ -91,15 +91,8 @@ var CreateCtrlJsController = function () {
 
     if(this.font){
       ellipsoid.textGeometry = new THREE.TextGeometry( text, {
-        font: this.font,
-        size: textSize,
-        height: 1,
-        curveSegments: 4,
-        bevelEnabled: true,
-        bevelThickness: 10,
-        bevelSize: 1,
-        bevelOffset: 0,
-        bevelSegments: 2
+        font: this.font, size: textSize, height: 1, curveSegments: 4, bevelEnabled: true, 
+        bevelThickness: 10, bevelSize: 1, bevelOffset: 0, bevelSegments: 2
       } );
       ellipsoid.textMesh = new THREE.Mesh(ellipsoid.textGeometry, material);
       ellipsoid.add(ellipsoid.textMesh);
@@ -183,7 +176,11 @@ var CreateCtrlJsController = function () {
     if(this.touchEvent){
       for(let touchID = 0; touchID < this.touchEvent.touches.length; touchID++){
         let touch = this.touchEvent.touches[touchID];
-    
+        
+        // TODO: Only raycast against the controller body and then pick the closest button!
+        // This will only work if directionals are reimplemented as joystick
+        // This is probably for the best
+
         // First move the directional buttons (if applicable)
         // TODO: Just renormalize the next ray to start within the center of the buttons...
         if(this.moveArrowButtons){

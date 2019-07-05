@@ -39,10 +39,11 @@ var CreateCtrlJsController = function () {
       this.A      = this.createWhiteSphere(this.buttons, 17.5, -4, 3.0, 0.15,0.15,0.05, 8, 0x0000ff, "A");
       this.B      = this.createWhiteSphere(this.buttons,  7.5, -4, 3.0, 0.15,0.15,0.05, 8, 0x00ff00, "B");
       this.Start  = this.createWhiteSphere(this.buttons,  0  ,  5, 3.0, 0.1, 0.1, 0.05, 8, 0xff0000, "START", 10);
-      this.Up     = this.createWhiteSphere(this.buttons, -12 ,  0, 3.0, 0.1, 0.1, 0.05, 8, 0xcccccc, "^");
-      this.Down   = this.createWhiteSphere(this.buttons, -12 , -6, 3.0, 0.1, 0.1, 0.05, 8, 0xcccccc, "v");
-      this.Left   = this.createWhiteSphere(this.buttons, -15 , -3, 3.0, 0.1, 0.1, 0.05, 8, 0xcccccc, "<");
-      this.Right  = this.createWhiteSphere(this.buttons, -9  , -3, 3.0, 0.1, 0.1, 0.05, 8, 0xcccccc, ">");
+      this.Up     = this.createWhiteSphere(this.buttons, -12 ,  0, 3.0, 0.15, 0.1, 0.05, 8, 0x888888, "^");
+      this.Down   = this.createWhiteSphere(this.buttons, -12 , -8, 3.0, 0.15, 0.1, 0.05, 8, 0x888888, "v");
+      this.Left   = this.createWhiteSphere(this.buttons, -16 , -4, 3.0, 0.1, 0.15, 0.05, 8, 0x888888, "<");
+      this.Right  = this.createWhiteSphere(this.buttons, -8  , -4, 3.0, 0.1, 0.15, 0.05, 8, 0x888888, ">");
+      //this.Center = this.createWhiteSphere(this.buttons, -12 , -4, 2.2, 0.1,  0.1, 0.05, 8, 0x888888);
     } );
 
     // Handle Touch Events
@@ -103,8 +104,12 @@ var CreateCtrlJsController = function () {
   // Graft startX and startY into the existing events!
   this.onTouchStart = function(event){
     for(let i = 0; i < event.changedTouches.length; i++){
-      event.changedTouches[i].startX = event.changedTouches[i].clientX;
-      event.changedTouches[i].startY = event.changedTouches[i].clientY;
+      for(let j = 0; j < event.touches.length; j++){
+        if(event.changedTouches[i].identifier === event.touches[j].identifier){
+          event.touches[j].startX = event.changedTouches[i].clientX;
+          event.touches[j].startY = event.changedTouches[i].clientY;
+        }
+      }
     }
     if(this.touchEvent){
       for(let i = 0; i < event.touches.length; i++){
@@ -169,19 +174,24 @@ var CreateCtrlJsController = function () {
       for(let touchID = 0; touchID < this.touchEvent.touches.length; touchID++){
         let touch = this.touchEvent.touches[touchID];
     
-        this.raycaster.setFromCamera( this.touchToRay(touch.clientX, touch.clientY), this.camera );
-        let intersections = this.raycaster.intersectObjects( this.scene.children );//this.buttons );
+        this.raycaster.setFromCamera( this.touchToRay(touch.startX, touch.startY), this.camera );
+        let intersections = this.raycaster.intersectObjects( [this.controllerBody] );//this.scene.children );
     
         if(intersections.length > 0 && intersections[0].object === this.controllerBody){
-          let curAverage   = this.Up.position.clone().add(this.Down.position).add(this.Left.position).add(this.Right.position).divideScalar(4.0);
-          let displacement = intersections[0].point.sub(curAverage);
+          if(intersections[0].point.x < -4.0){
+            let curAverage   = this.Up.position.clone().add(this.Down.position).add(this.Left.position).add(this.Right.position).divideScalar(4.0);
+            let displacement = intersections[0].point.sub(curAverage);
 
-          this.Up.position.add(displacement);
-          this.Down.position.add(displacement);
-          this.Left.position.add(displacement);
-          this.Right.position.add(displacement);
-          intersections.shift();
+            this.Up.position.add(displacement);
+            this.Down.position.add(displacement);
+            this.Left.position.add(displacement);
+            this.Right.position.add(displacement);
+            //this.Center.position.add(displacement);
+          }
         }
+
+        this.raycaster.setFromCamera( this.touchToRay(touch.clientX, touch.clientY), this.camera );
+        intersections = this.raycaster.intersectObjects( this.buttons );//this.buttons );
 
         for(let i = 0; i < intersections.length; i++){
           if(intersections[i].object === this.controllerBody) { continue; }

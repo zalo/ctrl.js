@@ -1,10 +1,11 @@
-var CreateCtrlJsControllerConnection = function () {
+var CreateCtrlJsControllerConnection = function (updateView) {
   this.keypressStates = {};
   this.playerNumber = -1;
   this.playerName = localStorage.getItem('ctrljsPlayerName');
   this.playerNameElement = document.getElementById("PlayerName");
   this.playerNameElement.value = this.playerName;
   this.connected = false;
+  this.updateView = updateView;
 
   // Read the connecting ID from the URL
   this.searchParams = new URLSearchParams(window.location.search);
@@ -32,31 +33,42 @@ var CreateCtrlJsControllerConnection = function () {
     this.peer.on('open', (id) => {
       this.myID = id;
       console.log('My peer ID is: ' + this.myID);
+      this.updateView();
     });
     this.peer.on('error', (err) =>  { console.error(err); });
     this.conn = this.peer.connect(this.searchParams.get("id"));
 
     this.conn.on('open', () => {
+      this.connected = true;
       document.getElementById("Status").innerText = "Connected!";
+      this.setPlayerName();
+      this.pingLoop = this.measurePingPeriodically();
+
       // Receive messages
       this.conn.on('data', (data) =>  {
-        if("playerNum" in data){ this.playerNumber = data.playerNum; }
+        if("playerNum" in data){ this.playerNumber = data.playerNum; this.updateView(); }
         if("pingTime" in data){
           let pingMsg = "Player " + (this.playerNumber+1) + " - Ping: " + Math.round(performance.now() - data.pingTime) +"ms";
           document.getElementById("Status").innerText = pingMsg;
         }else{
           console.log('Received', data);
         }
+        if("connected" in data) {
+          if(!data.connected){
+            console.log("Received Disconnect Event from Host...");
+            connection.close();
+          }
+        }
       });
-      this.setPlayerName();
-      this.connected = true;
-      this.pingLoop = this.measurePingPeriodically();
+
+      this.updateView();
     });
     this.conn.on('close', () => {
       document.getElementById("Status").innerText = "Disconnected; perhaps the server shut down?!";
       console.log("Disconnected; perhaps the server shut down?");
       this.connected = false;
       clearInterval(this.pingLoop);
+      this.updateView();
     });
   }
 
@@ -88,10 +100,13 @@ var CreateCtrlJsControllerConnection = function () {
     if(this.conn != null){ this.conn.send({ playerName: this.playerName }); }
   }
 
-  // Handle leaving the window gracefully
-  // Clean up connection; This appears to be a futile gesture...
+  // Handle leaving the window gracefully by cleaning up the connection;
+  // This appears to be a futile gesture, does the message escape?
   window.addEventListener("beforeunload", function() {
-    if(this.conn !== null){ this.conn.close(); }
+    if(this.conn !== null){
+      this.conn.send({connected: false});
+      this.conn.close(); 
+    }
     if(this.peer !== null){ this.peer.close(); }
   });
 }

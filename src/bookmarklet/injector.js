@@ -114,6 +114,14 @@ var ctrlJsServer = function () {
           // Append this packet to the debug history if it exists...
           let history = document.getElementById("eventHistory");
           if(history){ history.innerText = JSON.stringify(data) + "\n" + history.innerText; }
+
+          if("connected" in data) {
+            if(!data.connected){
+              if(history){ history.innerText = "Received Disconnect Event from Client...\n" + history.innerText; }
+              console.log("Received Disconnect Event from Client...");
+              connection.close();
+            }
+          }
         });
         connection.on('close', () => {
           console.log(connection.peer + " has left...");
@@ -296,6 +304,7 @@ var ctrlJsServer = function () {
     // Clean up the connections before the page exits
     window.addEventListener("beforeunload", function() {
       Object.getOwnPropertyNames(this.connections).forEach((peerID) => {
+        this.connections[peerID].send({connected: false});
         this.connections[peerID].close();
       });
       if(this.peer !== null){ this.peer.close(); }

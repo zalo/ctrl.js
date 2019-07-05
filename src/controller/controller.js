@@ -10,7 +10,7 @@ var CreateCtrlJsController = function () {
     this.parentNode = document.currentScript.parentNode;
 
     // Initialize new ctrl.js controller connection
-    this.ctrljs = new CreateCtrlJsControllerConnection();
+    this.ctrljs = new CreateCtrlJsControllerConnection(this.updateView);
 
     // Set up the Renderer
     this.curCanvas = document.createElement('canvas');
@@ -233,12 +233,13 @@ var CreateCtrlJsController = function () {
     return this.tempRay;
   }
 
+  this.updateView = function(){ this.viewDirty = true; }
   this.animate = function animatethis() {
     requestAnimationFrame(() => this.animate());
     //Set up a lazy render loop where it only renders if it's been interacted with in the last second
     if (this.viewDirty) { this.lastTimeRendered = this.time.getElapsedTime(); this.viewDirty = false; }
     if (this.time.getElapsedTime() - this.lastTimeRendered < 0.2) {
-      if(!this.ctrljs.connected) { this.scene.background = new THREE.Color(0xff0000); }
+      this.scene.background = this.ctrljs.connected ? new THREE.Color(0x000000) : new THREE.Color(0xff0000);
       this.renderer.render(this.scene, this.camera); 
     }
   };

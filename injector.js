@@ -92,6 +92,7 @@ var ctrlJsServer = function () {
           connection.buttonStates = {};
           this.updatePlayerNumbers(false);
           this.addPlayerDiv(connection);
+          this.updatePlayerNumbers(true);
         });
         connection.on('data', (data) => {
           if("pingTime" in data){ connection.send(data); }
@@ -164,7 +165,7 @@ var ctrlJsServer = function () {
       connection.playerDiv.settings.open = false;
       connection.playerDiv.label = document.createElement("label");
       connection.playerDiv.label.style = "position: relative; padding:2px; display: block; background-image: linear-gradient(white, gray); border: 1px solid black;text-shadow: 0px 0px 2px slategrey;";
-      connection.playerDiv.label.innerHTML = '<font style="color:#00cc00;font-weight:bold;font-size:1.25em;">P' + connection.playerNum + '</font>' + ' - NewPlayer';
+      connection.playerDiv.label.innerHTML = '<font style="color:#00cc00;font-weight:bold;font-size:1.25em;">P' + (connection.playerNum+1) + '</font>' + ' - NewPlayer';
       connection.playerDiv.label.settings = connection.playerDiv.settings;
       connection.playerDiv.label.onclick = function() {
         this.settings.open = !this.settings.open;
@@ -235,14 +236,21 @@ var ctrlJsServer = function () {
           try {
             iframe.contentWindow.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
             iframe.contentWindow.dispatchEvent(new KeyboardEvent("keypress",  keyOptions));
-          } catch(err) { if(!this.ignoreIFrames){ iframe.problematic = true; this.addIFrameWarningDiv(); this.ignoreIFrames = true; } }
+          } catch(err) {
+             if(!this.ignoreIFrames){ iframe.problematic = true; this.addIFrameWarningDiv(); this.ignoreIFrames = true; }
+             iframe.contentWindow.postMessage(new KeyboardEvent("keydown",  keyOptions));
+             iframe.contentWindow.postMessage(new KeyboardEvent("keypress",  keyOptions));
+          }
         }
       } else {
         document.dispatchEvent(new KeyboardEvent("keyup", keyOptions));
         for(let iframe of this.listOfIFrames){
           try {
             iframe.contentWindow.dispatchEvent(new KeyboardEvent("keyup",  keyOptions));
-          } catch(err) { if(!this.ignoreIFrames){ iframe.problematic = true; this.addIFrameWarningDiv(); this.ignoreIFrames = true; } }
+          } catch(err) {
+            if(!this.ignoreIFrames){ iframe.problematic = true; this.addIFrameWarningDiv(); this.ignoreIFrames = true; }
+            iframe.contentWindow.postMessage(new KeyboardEvent("keyup",  keyOptions));
+          }
         }
       }
     }

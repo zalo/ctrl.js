@@ -6,11 +6,15 @@ var CreateCtrlJsController = function () {
   this.currentTouches = {};
 
   this.init = function () {
+    this.parentNode = document.currentScript.parentNode;
+
+    // Initialize new ctrl.js controller connection
+    this.ctrljs = new CreateCtrlJsControllerConnection();
+
     // Set up the Renderer
     this.curCanvas = document.createElement('canvas');
-    this.curCanvas.style = "position:fixed; top:0px; left:0px;";
+    this.curCanvas.style = "position:fixed; top:0px; left:0px;z-index: 1;";
     //curCanvas.id = canvasId;
-    this.parentNode = document.currentScript.parentNode;
     this.parentNode.insertBefore(this.curCanvas, document.currentScript.nextSibling);
     this.renderer = new THREE.WebGLRenderer({ canvas: this.curCanvas, antialias: true });
     this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -44,13 +48,17 @@ var CreateCtrlJsController = function () {
       this.Left   = this.createWhiteSphere(this.buttons, -16 , -4, 3.0, 0.1, 0.175, 0.05, 8, 0x888888, "<");
       this.Right  = this.createWhiteSphere(this.buttons, -8  , -4, 3.0, 0.1, 0.175, 0.05, 8, 0x888888, ">");
       //this.Center = this.createWhiteSphere(this.buttons, -12 , -4, 2.2, 0.1,  0.1, 0.05, 8, 0x888888);
+
+      // Name the buttons so they can properly give off events later
+      this.A.btnName = "A"; this.B.btnName = "B"; this.Start.btnName = "Start"; this.Up.btnName = "Up";
+      this.Down.btnName = "Down"; this.Left.btnName = "Left"; this.Right.btnName = "Right";
     } );
 
     // Handle Touch Events
     this.raycaster = new THREE.Raycaster();
     this.tempRay = new THREE.Vector2();
     this.touchEvent = null;
-    this.emitting = [];
+    this.previousPressed = [];
     this.curCanvas.addEventListener( 'touchstart',       this.onTouchStart,  false );
     this.curCanvas.addEventListener( 'touchmove',        this.onTouchUpdate, false );
     this.curCanvas.addEventListener( 'touchforcechange', this.onTouchUpdate, false );
@@ -164,20 +172,21 @@ var CreateCtrlJsController = function () {
   // Run this with every touch event, updates the touch logic on demand
   this.handleTouches = function(){
     // Clear Highlighting
-    for(emitting of this.emitting){
+    for(emitting of this.previousPressed){
       emitting.material.emissive.setHex( 0x000000 );
       emitting.material.emissiveIntensity = 1;
     }
-    this.emitting = [];
+    let currentPressed = [];
     
     // Highlight objects currently being touched
     if(this.touchEvent){
       for(let touchID = 0; touchID < this.touchEvent.touches.length; touchID++){
         let touch = this.touchEvent.touches[touchID];
     
+        // First move the directional buttons (if applicable)
+        // TODO: Just renormalize the next ray to start within the center of the buttons...
         this.raycaster.setFromCamera( this.touchToRay(touch.startX, touch.startY), this.camera );
         let intersections = this.raycaster.intersectObjects( [this.controllerBody] );//this.scene.children );
-    
         if(intersections.length > 0 && intersections[0].object === this.controllerBody){
           if(intersections[0].point.x < -4.0){
             let curAverage   = this.Up.position.clone().add(this.Down.position).add(this.Left.position).add(this.Right.position).divideScalar(4.0);
@@ -191,17 +200,29 @@ var CreateCtrlJsController = function () {
           }
         }
 
+        // Raycast against all the buttons!
         this.raycaster.setFromCamera( this.touchToRay(touch.clientX, touch.clientY), this.camera );
         intersections = this.raycaster.intersectObjects( this.buttons );//this.buttons );
-
         for(let i = 0; i < intersections.length; i++){
           if(intersections[i].object === this.controllerBody) { continue; }
           intersections[i].object.material.emissive.setHex( 0xffffff );
           intersections[i].object.material.emissiveIntensity = touch.force * -1.0;
-          this.emitting.push(intersections[i].object);
+
+          // Send Press Event if new intersection...
+          if(!this.previousPressed.includes(intersections[i].object)){
+            this.ctrljs.sendPress(intersections[i].object.btnName);
+          }
+          currentPressed.push(intersections[i].object);
         }
       }
     }
+    // Send release events if pressed last time, but not this time...
+    for(let i = 0; i < this.previousPressed.length; i++){
+      if(!currentPressed.includes(this.previousPressed[i])){
+        this.ctrljs.sendRelease(this.previousPressed[i].btnName);
+      }
+    }
+    this.previousPressed = currentPressed;
   }
   this.touchToRay = function(x,y){
     this.tempRay.set(( x / window.innerWidth  ) * 2 - 1, 
@@ -220,4 +241,4 @@ var CreateCtrlJsController = function () {
   this.animate();
 }
 
-new CreateCtrlJsController();
+var controller = new CreateCtrlJsController();

@@ -29,4 +29,4 @@ The current default button mapping is:
 
 ## Credits
 
-Based on [peer.js](https://peerjs.com/) and [qrcode.js](https://github.com/davidshimjs/qrcodejs).
+Based on [peer.js](https://peerjs.com/), [qrcode.js](https://github.com/davidshimjs/qrcodejs/), and [three.js](https://threejs.org/).

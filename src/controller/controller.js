@@ -233,15 +233,18 @@ var CreateCtrlJsController = function () {
     return this.tempRay;
   }
 
+  this.frameNumber = 0;
   this.updateView = function(){ this.viewDirty = true; }
   this.animate = function animatethis() {
     requestAnimationFrame(() => this.animate());
-    //Set up a lazy render loop where it only renders if it's been interacted with in the last second
+    // Set up a lazy render loop where it only renders if it's been interacted with in the last second
+    // And even then, only every third frame to preserve the battery-life of the phone
     if (this.viewDirty) { this.lastTimeRendered = this.time.getElapsedTime(); this.viewDirty = false; }
-    if (this.time.getElapsedTime() - this.lastTimeRendered < 0.2) {
+    if (this.time.getElapsedTime() - this.lastTimeRendered < 0.2 && this.frameNumber % 3 === 0) {
       this.scene.background = this.ctrljs.disconnected ? new THREE.Color(0x000000) : new THREE.Color(0xff0000);
       this.renderer.render(this.scene, this.camera); 
     }
+    this.frameNumber += 1;
   };
 
   this.init();

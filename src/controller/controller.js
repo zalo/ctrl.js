@@ -238,7 +238,7 @@ var CreateCtrlJsController = function () {
     // And even then, only every third frame to preserve the battery-life of the phone
     if (this.viewDirty) { this.lastTimeRendered = this.time.getElapsedTime(); this.viewDirty = false; }
     if (this.time.getElapsedTime() - this.lastTimeRendered < 0.2 && this.frameNumber % 3 === 0) {
-      this.scene.background = this.ctrljs.disconnected ? new THREE.Color(0x000000) : new THREE.Color(0xff0000);
+      this.scene.background = this.ctrljs.disconnected ? new THREE.Color(0xff0000) : new THREE.Color(0x000000);
       this.renderer.render(this.scene, this.camera); 
     }
     this.frameNumber += 1;

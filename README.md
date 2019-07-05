@@ -1,4 +1,4 @@
-# ctrl.js
+# [ctrl.js](https://zalo.github.io/ctrl.js/src/bookmarklet/faq.html)
 
 A bookmarklet for using phones as impromptu controllers in browser-based "local" multiplayer games.
 
@@ -20,11 +20,9 @@ The current default button mapping is:
  - Right -> `d`
  - A     -> `Space`
  - B     -> `Shift`
+ - Start  -> `Enter`
 
-
-## Testing
-
-[Debug Test](https://zalo.github.io/ctrl.js/src/bookmarklet/testServer.html) - Scan the marker with your phone's camera app to test connectivity and receipt of events.
+ These keymappings can be changed by clicking on the player's name above the QR Code.
 
 
 ## Credits

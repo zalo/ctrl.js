@@ -238,8 +238,8 @@ var ctrlJsServer = function () {
             iframe.contentWindow.dispatchEvent(new KeyboardEvent("keypress",  keyOptions));
           } catch(err) {
              if(!this.ignoreIFrames){ iframe.problematic = true; this.addIFrameWarningDiv(); this.ignoreIFrames = true; }
-             iframe.contentWindow.postMessage(new KeyboardEvent("keydown",  keyOptions));
-             iframe.contentWindow.postMessage(new KeyboardEvent("keypress",  keyOptions));
+             iframe.contentWindow.postMessage(new KeyboardEvent("keydown",  keyOptions), "*");
+             iframe.contentWindow.postMessage(new KeyboardEvent("keypress",  keyOptions), "*");
           }
         }
       } else {
@@ -249,7 +249,7 @@ var ctrlJsServer = function () {
             iframe.contentWindow.dispatchEvent(new KeyboardEvent("keyup",  keyOptions));
           } catch(err) {
             if(!this.ignoreIFrames){ iframe.problematic = true; this.addIFrameWarningDiv(); this.ignoreIFrames = true; }
-            iframe.contentWindow.postMessage(new KeyboardEvent("keyup",  keyOptions));
+            iframe.contentWindow.postMessage(new KeyboardEvent("keyup",  keyOptions), "*");
           }
         }
       }

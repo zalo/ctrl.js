@@ -59,7 +59,7 @@ var ctrlJsServer = function () {
     this.peer = new Peer({
       config: {
         iceServers: [{
-          urls: [ "stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302" ]
+          urls: [ "stun:stun.l.google.com:19302"]
         }, {
           username: "RZyygb9oUYQFuiNJ62O1gr61l_qbtLeiyH6driGchkplknMYoj2q2loF_33bLqk9AAAAAF0c60R6YWxv",
           credential: "44ba5ddc-9dbb-11e9-997a-a695319b0c25",
@@ -112,8 +112,8 @@ var ctrlJsServer = function () {
           }
 
           // Append this packet to the debug history if it exists...
-          let history = document.getElementById("eventHistory");
-          if(history){ history.innerText = JSON.stringify(data) + "\n" + history.innerText; }
+          let history = document.getElementById("ctrlJsEvents");
+          if(history){ history.innerText = JSON.stringify(data); }// + "\n" + history.innerText; }
 
           if("connected" in data) {
             if(!data.connected){

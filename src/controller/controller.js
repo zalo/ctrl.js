@@ -201,18 +201,24 @@ var CreateCtrlJsController = function () {
         }
 
         // Raycast against all the buttons!
-        this.raycaster.setFromCamera( this.touchToRay(touch.clientX, touch.clientY), this.camera );
-        intersections = this.raycaster.intersectObjects( this.buttons );//this.buttons );
+        this.raycaster.setFromCamera( this.touchToRay(touch.startX, touch.startY), this.camera );
+        intersections = this.raycaster.intersectObjects( [this.controllerBody] );//this.buttons );
         for(let i = 0; i < intersections.length; i++){
-          if(intersections[i].object === this.controllerBody) { continue; }
-          intersections[i].object.material.emissive.setHex( 0xffffff );
-          intersections[i].object.material.emissiveIntensity = touch.force * -1.0;
+          let minDist = 100.0; let closestButton = 0;
+          for(let j = 0; j < this.buttons.length; j++){
+            let distToThisButton = intersections[i].point.clone().sub(this.buttons[j].position).magnitude();
+            if(distToThisButton < minDist){ minDist = distToThisButton; closestButton = j; }
+          }
+
+          //if(intersections[i].object === this.controllerBody) { continue; }
+          this.buttons[closestButton].material.emissive.setHex( 0xffffff );
+          this.buttons[closestButton].material.emissiveIntensity = touch.force >= 1.0 ? 0.2 : -touch.force;
 
           // Send Press Event if new intersection...
-          if(!this.previousPressed.includes(intersections[i].object)){
-            this.ctrljs.sendPress(intersections[i].object.btnName);
+          if(!this.previousPressed.includes(this.buttons[closestButton])){
+            this.ctrljs.sendPress(this.buttons[closestButton].btnName);
           }
-          currentPressed.push(intersections[i].object);
+          currentPressed.push(this.buttons[closestButton]);
         }
       }
     }
@@ -237,7 +243,7 @@ var CreateCtrlJsController = function () {
     // Set up a lazy render loop where it only renders if it's been interacted with in the last second
     // And even then, only every third frame to preserve the battery-life of the phone
     if (this.viewDirty) { this.lastTimeRendered = this.time.getElapsedTime(); this.viewDirty = false; }
-    if (this.time.getElapsedTime() - this.lastTimeRendered < 0.2 && this.frameNumber % 3 === 0) {
+    if (this.time.getElapsedTime() - this.lastTimeRendered < 0.2 && this.frameNumber % 10 === 0) {
       this.scene.background = this.ctrljs.disconnected ? new THREE.Color(0xff0000) : new THREE.Color(0x000000);
       this.renderer.render(this.scene, this.camera); 
     }

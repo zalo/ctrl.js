@@ -4,6 +4,7 @@ var CreateCtrlJsControllerConnection = function (updateView) {
   this.playerName = localStorage.getItem('ctrljsPlayerName');
   this.playerNameElement = document.getElementById("PlayerName");
   this.playerNameElement.value = this.playerName;
+  this.playerNameElement.addEventListener('keypress', function(e) { if (e.which == 13) this.blur(); });
   this.connected = false; this.disconnected = false;
   this.updateView = updateView;
   this.lastReceivedPing = performance.now();

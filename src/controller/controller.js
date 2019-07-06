@@ -40,6 +40,7 @@ var CreateCtrlJsController = function () {
     this.controllerBody = this.createWhiteSphere(null, 0,0,0, 1,0.45,0.1, 16, 0xffffff);
     this.fontLoader = new THREE.FontLoader();
     this.fontLoader.load( '/ctrl.js/src/controller/optimer_bold.typeface.json', (font) => {
+    //this.fontLoader.load( '/src/controller/optimer_bold.typeface.json', (font) => {
       this.font = font;
       this.buttons = [];
       this.A      = this.createWhiteSphere(this.buttons, 18, -3, 3.0, 0.15, 0.15, 0.05, 8, 0x0000ff, "A");
@@ -138,6 +139,7 @@ var CreateCtrlJsController = function () {
     this.touchEvent = event;
     event.preventDefault();
     event.stopPropagation();
+    this.ctrljs.playerNameElement.blur(); // Possible fix for android browser bug...
     this.viewDirty = true;
     this.frameNumber = 0; // Forces an instant refresh
     this.handleTouches();
@@ -173,8 +175,18 @@ var CreateCtrlJsController = function () {
     event.preventDefault();
     event.stopPropagation();
     this.viewDirty = true;
-    this.frameNumber = 0; // Forces an instant refresh
-    this.handleTouches();
+    // Must wait one whole frame before sending release events!
+    // This is critical as some applications won't recognize events
+    // received on the same frame...
+    if(this.frameNumber != 0) {
+      this.handleTouches();
+      this.frameNumber = 0; // Forces an instant refresh
+    } else {
+      setTimeout(()=>{
+        this.handleTouches();
+        this.frameNumber = 0;
+      }, 16);
+    }
   }.bind(this);
 
   // Run this with every touch event, updates the touch logic on demand
@@ -195,7 +207,7 @@ var CreateCtrlJsController = function () {
         let touch = this.touchEvent.touches[touchID];
 
         // Raycast against all the buttons!
-        this.raycaster.setFromCamera( this.touchToRay(touch.clientX, touch.clientY), this.camera );
+        this.raycaster.setFromCamera( this.touchToRay(touch.startX, touch.startY), this.camera );
         intersections = this.raycaster.intersectObjects( [this.controllerBody] );//this.buttons );
         for(let i = 0; i < intersections.length; i++){
           let minDist = 1000.0; let closestButton = 0;
@@ -227,7 +239,7 @@ var CreateCtrlJsController = function () {
     for(let i = 0; i < this.previousPressed.length; i++){
       if(!this.currentPressed.includes(this.previousPressed[i])){
         this.ctrljs.sendRelease(this.previousPressed[i].btnName);
-        try { navigator.vibrate([75]); } catch (e) { }
+        try { navigator.vibrate([50]); } catch (e) { }
       }
     }
     this.previousPressed = this.currentPressed;
@@ -240,7 +252,7 @@ var CreateCtrlJsController = function () {
   this.handlePress = function(button){
     if(!this.previousPressed.includes(button)){
       this.ctrljs.sendPress(button.btnName);
-      try { navigator.vibrate([50]); } catch (e) { }
+      try { navigator.vibrate([25]); } catch (e) { }
     }
     this.currentPressed.push(button);
   }

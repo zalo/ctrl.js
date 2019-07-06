@@ -6,6 +6,7 @@ var CreateCtrlJsControllerConnection = function (updateView) {
   this.playerNameElement.value = this.playerName;
   this.connected = false; this.disconnected = false;
   this.updateView = updateView;
+  this.lastReceivedPing = performance.now();
 
   // Read the connecting ID from the URL
   this.searchParams = new URLSearchParams(window.location.search);
@@ -90,7 +91,9 @@ var CreateCtrlJsControllerConnection = function (updateView) {
   // Update the Ping Measurement once every so often
   this.measurePingPeriodically = function (){
     return setInterval(()=>{
-      if(this.conn != null){ this.conn.send({ pingTime: performance.now() }); }
+      let now = performance.now();
+      if(this.conn != null){ this.conn.send({ pingTime: now }); }
+      this.disconnected = (now - this.lastReceivedPing) > 1000;
     }, 2500);
   }
 

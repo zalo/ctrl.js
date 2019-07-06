@@ -212,7 +212,7 @@ var CreateCtrlJsController = function () {
 
           //if(intersections[i].object === this.controllerBody) { continue; }
           this.buttons[closestButton].material.emissive.setHex( 0xffffff );
-          this.buttons[closestButton].material.emissiveIntensity = touch.force >= 1.0 ? 0.2 : -touch.force;
+          this.buttons[closestButton].material.emissiveIntensity = touch.force >= 1.0 ? -0.2 : -touch.force;
 
           // Send Press Event if new intersection...
           if(!this.previousPressed.includes(this.buttons[closestButton])){
@@ -243,7 +243,7 @@ var CreateCtrlJsController = function () {
     // Set up a lazy render loop where it only renders if it's been interacted with in the last second
     // And even then, only every third frame to preserve the battery-life of the phone
     if (this.viewDirty) { this.lastTimeRendered = this.time.getElapsedTime(); this.viewDirty = false; }
-    if (this.time.getElapsedTime() - this.lastTimeRendered < 0.2 && this.frameNumber % 10 === 0) {
+    if (this.time.getElapsedTime() - this.lastTimeRendered < 0.2 && this.frameNumber % 5 === 0) {
       this.scene.background = this.ctrljs.disconnected ? new THREE.Color(0xff0000) : new THREE.Color(0x000000);
       this.renderer.render(this.scene, this.camera); 
     }

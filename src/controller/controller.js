@@ -3,6 +3,7 @@ var CreateCtrlJsController = function () {
   this.lastTimeRendered = 0.0;
   this.viewDirty = true;
   this.moveArrowButtons = false;
+  this.useJoystick = false;
 
   this.currentTouches = {};
 
@@ -41,20 +42,28 @@ var CreateCtrlJsController = function () {
     this.fontLoader.load( '/ctrl.js/src/controller/optimer_bold.typeface.json', (font) => {
       this.font = font;
       this.buttons = [];
-      this.A      = this.createWhiteSphere(this.buttons, 17.5, -4, 3.0, 0.15, 0.15, 0.05, 8, 0x0000ff, "A");
-      this.B      = this.createWhiteSphere(this.buttons,  6.5, -4, 3.0, 0.15, 0.15, 0.05, 8, 0x00ff00, "B");
+      this.A      = this.createWhiteSphere(this.buttons, 18, -3, 3.0, 0.15, 0.15, 0.05, 8, 0x0000ff, "A");
+      this.B      = this.createWhiteSphere(this.buttons,  8, -7, 3.0, 0.15, 0.15, 0.05, 8, 0x00ff00, "B");
       this.Start  = this.createWhiteSphere(this.buttons,  0  ,  5, 3.0, 0.1,   0.1, 0.05, 8, 0xff0000, "START", 10);
-
-      this.joystick = new THREE.Group();
-      this.joystick.position.set( -11, -4, 2.5 );
-      this.joystick.add(this.createWhiteSphere(null,  0, 0, 5.0,  0.125, 0.125, 0.05,  8, 0x777777));
-      this.joystick.add(this.createWhiteSphere(null,  0, 0, 2.5,  0.02, 0.02, 0.14,  8, 0x777777));
-      this.buttons.push(this.joystick);
-      this.scene.add(this.joystick);
-
       // Name the buttons so they can properly give off events later
       this.A.btnName = "A"; this.B.btnName = "B"; this.Start.btnName = "Start"; 
-      this.Up = {btnName: "Up"}; this.Down = {btnName: "Down"}; this.Left = {btnName: "Left"}; this.Right = {btnName: "Right"};
+
+      if(this.useJoystick){
+        this.joystick = new THREE.Group();
+        this.joystick.position.set( -11, -4, 2.5 );
+        this.joystick.add(this.createWhiteSphere(null,  0, 0, 5.0,  0.125, 0.125, 0.05,  8, 0x777777));
+        this.joystick.add(this.createWhiteSphere(null,  0, 0, 2.5,  0.02, 0.02, 0.14,  8, 0x777777));
+        this.buttons.push(this.joystick);
+        this.scene.add(this.joystick);
+        this.Up = {btnName: "Up"}; this.Down = {btnName: "Down"}; this.Left = {btnName: "Left"}; this.Right = {btnName: "Right"};
+      } else {
+        this.joystick = null;
+        this.Up     = this.createWhiteSphere(this.buttons, -12 ,  0, 3.0, 0.1, 0.1, 0.05, 8, 0x888888, "/\\");
+        this.Down   = this.createWhiteSphere(this.buttons, -12 , -8, 3.0, 0.1, 0.1, 0.05, 8, 0x888888, "v");
+        this.Left   = this.createWhiteSphere(this.buttons, -16 , -4, 3.0, 0.1, 0.1, 0.05, 8, 0x888888, "<");
+        this.Right  = this.createWhiteSphere(this.buttons, -8  , -4, 3.0, 0.1, 0.1, 0.05, 8, 0x888888, ">");
+        this.Up.btnName = "Up"; this.Down.btnName = "Down"; this.Left.btnName = "Left"; this.Right.btnName = "Right";
+      }
     } );
 
     // Handle Touch Events
@@ -146,6 +155,7 @@ var CreateCtrlJsController = function () {
     event.preventDefault();
     event.stopPropagation();
     this.viewDirty = true;
+    //this.frameNumber = 0; // Forces an instant refresh
     this.handleTouches();
   }.bind(this);
   this.onTouchEnd = function(event){
@@ -176,7 +186,7 @@ var CreateCtrlJsController = function () {
         emitting.material.emissiveIntensity = 1;
       }
     }
-    this.joystick.quaternion.setFromEuler(new THREE.Euler());
+    if(this.joystick !== null){ this.joystick.quaternion.setFromEuler(new THREE.Euler()); }
     this.currentPressed = [];
     
     // Highlight objects currently being touched
@@ -185,7 +195,7 @@ var CreateCtrlJsController = function () {
         let touch = this.touchEvent.touches[touchID];
 
         // Raycast against all the buttons!
-        this.raycaster.setFromCamera( this.touchToRay(touch.startX, touch.startY), this.camera );
+        this.raycaster.setFromCamera( this.touchToRay(touch.clientX, touch.clientY), this.camera );
         intersections = this.raycaster.intersectObjects( [this.controllerBody] );//this.buttons );
         for(let i = 0; i < intersections.length; i++){
           let minDist = 1000.0; let closestButton = 0;
@@ -201,7 +211,7 @@ var CreateCtrlJsController = function () {
             this.handlePress(this.buttons[closestButton]);
           } else {
             // Handle the joystick logic
-            let movement = new THREE.Vector2((touch.clientX - touch.startX), (touch.clientY - touch.startY)).multiplyScalar(0.01).clampLength(0,0.71);
+            let movement = new THREE.Vector2((touch.clientX - touch.startX), (touch.clientY - touch.startY)).multiplyScalar(0.01).clampLength(0,0.5);
             this.buttons[closestButton].quaternion.setFromEuler(new THREE.Euler(movement.y, movement.x, 0));
 
             movement.divideScalar(0.71); let sensitivity = 0.3;
@@ -217,6 +227,7 @@ var CreateCtrlJsController = function () {
     for(let i = 0; i < this.previousPressed.length; i++){
       if(!this.currentPressed.includes(this.previousPressed[i])){
         this.ctrljs.sendRelease(this.previousPressed[i].btnName);
+        navigator.vibrate([50]);
       }
     }
     this.previousPressed = this.currentPressed;
@@ -229,6 +240,7 @@ var CreateCtrlJsController = function () {
   this.handlePress = function(button){
     if(!this.previousPressed.includes(button)){
       this.ctrljs.sendPress(button.btnName);
+      navigator.vibrate([50]);
     }
     this.currentPressed.push(button);
   }
@@ -240,7 +252,7 @@ var CreateCtrlJsController = function () {
     // Set up a lazy render loop where it only renders if it's been interacted with in the last second
     // And even then, only every third frame to preserve the battery-life of the phone
     if (this.viewDirty) { this.lastTimeRendered = this.time.getElapsedTime(); this.viewDirty = false; }
-    if (this.time.getElapsedTime() - this.lastTimeRendered < 0.2 && this.frameNumber % 2 === 0) {
+    if (this.time.getElapsedTime() - this.lastTimeRendered < 0.2 && this.frameNumber % 4 === 0) {
       this.scene.background = this.ctrljs.disconnected ? new THREE.Color(0xff0000) : new THREE.Color(0x000000);
       this.renderer.render(this.scene, this.camera); 
     }

@@ -206,7 +206,7 @@ var CreateCtrlJsController = function () {
         for(let i = 0; i < intersections.length; i++){
           let minDist = 100.0; let closestButton = 0;
           for(let j = 0; j < this.buttons.length; j++){
-            let distToThisButton = intersections[i].point.clone().sub(this.buttons[j].position).magnitude();
+            let distToThisButton = intersections[i].point.clone().sub(this.buttons[j].position).lengthSq();
             if(distToThisButton < minDist){ minDist = distToThisButton; closestButton = j; }
           }
 

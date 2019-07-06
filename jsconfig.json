@@ -1,8 +1,8 @@
 {
   "typeAcquisition": {
     "include": [
-      "peerjs",
-      "three"
+      "three",
+      "peerjs"
     ]
   },
   "compilerOptions": {

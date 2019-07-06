@@ -9,8 +9,9 @@
   </head>
 
   <body style="overflow: hidden;">
-    <input id="PlayerName" type="text" placeholder="Player Name" onchange="controller.ctrljs.setPlayerName();" oninput="this.onchange();" style="z-index: 4;position: absolute"></input>
-    <div id="Status" style="color:white;z-index: 3;position: absolute;top:2em;">Connecting...</div>
+    <input id="PlayerName" type="text" placeholder="Player Name" onchange="controller.ctrljs.setPlayerName();" oninput="this.onchange();" style="z-index: 4; position: absolute;"></input>
+    <div id="Status" style="color:white; z-index: 3; position: absolute; top:2em;">Connecting...</div>
+    <button id="ToggleDPad" style="z-index: 2; position: absolute; left:14em;" onclick="controller.toggleDPad();">Toggle Directional Pad</button>
     <script type="text/javascript" src="src/controller/controller.js"></script>
   </body>
 </html>

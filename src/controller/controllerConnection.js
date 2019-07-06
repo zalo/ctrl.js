@@ -94,7 +94,7 @@ var CreateCtrlJsControllerConnection = function (updateView) {
     return setInterval(()=>{
       let now = performance.now();
       if(this.conn != null){ this.conn.send({ pingTime: now }); }
-      this.disconnected = (now - this.lastReceivedPing) > 1000;
+      this.disconnected = (now - this.lastReceivedPing) < 1000;
     }, 2500);
   }
 

@@ -227,7 +227,7 @@ var CreateCtrlJsController = function () {
     for(let i = 0; i < this.previousPressed.length; i++){
       if(!this.currentPressed.includes(this.previousPressed[i])){
         this.ctrljs.sendRelease(this.previousPressed[i].btnName);
-        navigator.vibrate([50]);
+        try { navigator.vibrate([75]); } catch (e) { }
       }
     }
     this.previousPressed = this.currentPressed;
@@ -240,7 +240,7 @@ var CreateCtrlJsController = function () {
   this.handlePress = function(button){
     if(!this.previousPressed.includes(button)){
       this.ctrljs.sendPress(button.btnName);
-      navigator.vibrate([50]);
+      try { navigator.vibrate([50]); } catch (e) { }
     }
     this.currentPressed.push(button);
   }

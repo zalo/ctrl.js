@@ -51,6 +51,7 @@ var CreateCtrlJsControllerConnection = function (updateView) {
         if("pingTime" in data){
           let pingMsg = "Player " + (this.playerNumber+1) + " - Ping: " + Math.round(performance.now() - data.pingTime) +"ms";
           document.getElementById("Status").innerText = pingMsg;
+          this.lastReceivedPing = performance.now();
         }else{
           console.log('Received', data);
         }

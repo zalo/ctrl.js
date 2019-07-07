@@ -45,6 +45,9 @@
           <p>ctrl.js is a bookmarklet that allows you and your friends to connect your phone to your browser to play HTML5 games.<br>
           <h5><a id="Instructions"></a>Instructions</h5>
           <p>Simply activate <a href="javascript:{var s=document.createElement('script');s.src='https://zalo.github.io/ctrl.js/bookmarklet.js',document.body.appendChild(s);};void(0);">the bookmarklet</a> and scan the QR Code with your phone’s default camera app to connect.</p>
+          <h5><a id="How_it_works"></a>How it works</h5>
+          <p>The QR Code contains a link to the peer.js session running in the bookmarklet, allowing it to find your browser and form P2P connection</p>
+          <p>Events on the phone will then inject themselves as spoofed Keyboard <code>KeyEvents</code> into the body of the web page you are on.</p>
           <h5><a id="Keymappings"></a>Keymappings</h5>
           <table class="u">
             <thead>
@@ -84,18 +87,11 @@
               </tr>
             </tbody>
           </table>
-
-          <p>These keymappings can be changed by clicking on the player’s name above the QR Code.</p>
-          <h5><a id="How_it_works"></a>How it works</h5>
-          <p>The QR Code contains a link to the peer.js session running in the bookmarklet, allowing it to find your browser and form P2P connection to it.</p>
-          <p>Events on the phone will then inject themselves as <code>KeyEvents</code> into the web page you are on.</p>
-          
+          <p>These keymappings can be changed by clicking on the player’s name above the QR Code, and are stored locally on a per-page basis.</p>
           <h5><a id="Open_Source" href="https://github.com/zalo/ctrl.js"></a>Open Source</h5>
           <p><a href="https://github.com/zalo/ctrl.js">The source code to ctrl.js is available under the MIT License at Github.</a></p>
-
           <h5><a id="Credits" href=""></a>Credits</h5>
           <p>ctrl.js is based on <a href="https://peerjs.com/">peer.js</a>, <a href="https://github.com/davidshimjs/qrcodejs/">qrcode.js</a>, and <a href="https://threejs.org/">three.js</a>.</p>
-          
           <h5><a id="Debug_Event_Stream"></a>Raw Events</h5>
           <pre class="code-example"><code class="code-example-body prettyprint" id="ctrlJsEvents">ctrl.js Events will appear here upon connection.</code></pre>
       </div>

@@ -149,7 +149,7 @@ var ctrlJsServer = function () {
       this.statusView.insertAdjacentElement("beforeend", this.statusView.players);
 
       // Add the QR Code (with padding so it will scan!)
-      let qrCodeLink = "ctrljs.xyz?i=" + this.peerId;
+      let qrCodeLink = "http://ctrljs.xyz?i=" + this.peerId;
       this.statusView.qrContainer = document.createElement("div");
       this.statusView.qrContainer.id = "qrcodeContainer";
       this.statusView.qrContainer.style = "padding:10px";

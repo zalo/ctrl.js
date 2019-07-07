@@ -26,8 +26,9 @@
     <link rel="icon" type="image/png" href="images/favicon.png">
 
     <script type="text/javascript">
-      if (this.searchParams.has("i")) {
-        window.location.assign("https://zalo.github.io/ctrl.js/ctrl.html?i="+this.searchParams.get("id"));
+      let curSearchParams = new URLSearchParams(window.location.search);
+      if (curSearchParams.has("i")) {
+        window.location.assign("https://zalo.github.io/ctrl.js/ctrl.html?i="+curSearchParams.get("i"));
       }
     </script>
 
@@ -88,9 +89,15 @@
           <h5><a id="How_it_works"></a>How it works</h5>
           <p>The QR Code contains a link to the peer.js session running in the bookmarklet, allowing it to find your browser and form P2P connection to it.</p>
           <p>Events on the phone will then inject themselves as <code>KeyEvents</code> into the web page you are on.</p>
-          <h5><a id="Debug_Event_Stream"></a>Debug Event Stream</h5>
+          
+          <h5><a id="Open_Source" href="https://github.com/zalo/ctrl.js"></a>Open Source</h5>
+          <p><a href="https://github.com/zalo/ctrl.js">The source code to ctrl.js is available under the MIT License at Github.</a></p>
 
-          <pre class="code-example"><code class="code-example-body prettyprint" id="ctrlJsEvents"></code></pre>
+          <h5><a id="Credits" href=""></a>Credits</h5>
+          <p>ctrl.js is based on <a href="https://peerjs.com/">peer.js</a>, <a href="https://github.com/davidshimjs/qrcodejs/">qrcode.js</a>, and <a href="https://threejs.org/">three.js</a>.</p>
+          
+          <h5><a id="Debug_Event_Stream"></a>Raw Events</h5>
+          <pre class="code-example"><code class="code-example-body prettyprint" id="ctrlJsEvents">ctrl.js Events will appear here upon connection.</code></pre>
       </div>
     </div>
   </div>

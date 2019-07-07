@@ -1,45 +1,45 @@
 // The default keymappings...
 // TODO: Store these per-player and in localStorage!
 var keyMappings = [{
-  Up:    {key: "w",     code: "KeyW",      keyCode: 87},
-  Left:  {key: "a",     code: "KeyA",      keyCode: 65},
-  Down:  {key: "s",     code: "KeyS",      keyCode: 83},
-  Right: {key: "d",     code: "KeyD",      keyCode: 68},
-  A:     {key: " ",     code: "Space",     keyCode: 32},
-  B:     {key: "Shift", code: "ShiftLeft", keyCode: 16},
-  Start: {key: "Enter", code: "Enter",     keyCode: 13}
+  Up:    {key: "w",     code: "KeyW",      keyCode: 87, which: 87},
+  Left:  {key: "a",     code: "KeyA",      keyCode: 65, which: 65},
+  Down:  {key: "s",     code: "KeyS",      keyCode: 83, which: 83},
+  Right: {key: "d",     code: "KeyD",      keyCode: 68, which: 68},
+  A:     {key: " ",     code: "Space",     keyCode: 32, which: 32},
+  B:     {key: "Shift", code: "ShiftLeft", keyCode: 16, which: 16},
+  Start: {key: "Enter", code: "Enter",     keyCode: 13, which: 13}
 },{
-  Up:    {key: "w",     code: "KeyW",      keyCode: 87},
-  Left:  {key: "a",     code: "KeyA",      keyCode: 65},
-  Down:  {key: "s",     code: "KeyS",      keyCode: 83},
-  Right: {key: "d",     code: "KeyD",      keyCode: 68},
-  A:     {key: " ",     code: "Space",     keyCode: 32},
-  B:     {key: "Shift", code: "ShiftLeft", keyCode: 16},
-  Start: {key: "Enter", code: "Enter",     keyCode: 13}
+  Up:    {key: "w",     code: "KeyW",      keyCode: 87, which: 87},
+  Left:  {key: "a",     code: "KeyA",      keyCode: 65, which: 65},
+  Down:  {key: "s",     code: "KeyS",      keyCode: 83, which: 83},
+  Right: {key: "d",     code: "KeyD",      keyCode: 68, which: 68},
+  A:     {key: " ",     code: "Space",     keyCode: 32, which: 32},
+  B:     {key: "Shift", code: "ShiftLeft", keyCode: 16, which: 16},
+  Start: {key: "Enter", code: "Enter",     keyCode: 13, which: 13}
 },{
-  Up:    {key: "w",     code: "KeyW",      keyCode: 87},
-  Left:  {key: "a",     code: "KeyA",      keyCode: 65},
-  Down:  {key: "s",     code: "KeyS",      keyCode: 83},
-  Right: {key: "d",     code: "KeyD",      keyCode: 68},
-  A:     {key: " ",     code: "Space",     keyCode: 32},
-  B:     {key: "Shift", code: "ShiftLeft", keyCode: 16},
-  Start: {key: "Enter", code: "Enter",     keyCode: 13}
+  Up:    {key: "w",     code: "KeyW",      keyCode: 87, which: 87},
+  Left:  {key: "a",     code: "KeyA",      keyCode: 65, which: 65},
+  Down:  {key: "s",     code: "KeyS",      keyCode: 83, which: 83},
+  Right: {key: "d",     code: "KeyD",      keyCode: 68, which: 68},
+  A:     {key: " ",     code: "Space",     keyCode: 32, which: 32},
+  B:     {key: "Shift", code: "ShiftLeft", keyCode: 16, which: 16},
+  Start: {key: "Enter", code: "Enter",     keyCode: 13, which: 13}
 },{
-  Up:    {key: "w",     code: "KeyW",      keyCode: 87},
-  Left:  {key: "a",     code: "KeyA",      keyCode: 65},
-  Down:  {key: "s",     code: "KeyS",      keyCode: 83},
-  Right: {key: "d",     code: "KeyD",      keyCode: 68},
-  A:     {key: " ",     code: "Space",     keyCode: 32},
-  B:     {key: "Shift", code: "ShiftLeft", keyCode: 16},
-  Start: {key: "Enter", code: "Enter",     keyCode: 13}
+  Up:    {key: "w",     code: "KeyW",      keyCode: 87, which: 87},
+  Left:  {key: "a",     code: "KeyA",      keyCode: 65, which: 65},
+  Down:  {key: "s",     code: "KeyS",      keyCode: 83, which: 83},
+  Right: {key: "d",     code: "KeyD",      keyCode: 68, which: 68},
+  A:     {key: " ",     code: "Space",     keyCode: 32, which: 32},
+  B:     {key: "Shift", code: "ShiftLeft", keyCode: 16, which: 16},
+  Start: {key: "Enter", code: "Enter",     keyCode: 13, which: 13}
 },{
-  Up:    {key: "w",     code: "KeyW",      keyCode: 87},
-  Left:  {key: "a",     code: "KeyA",      keyCode: 65},
-  Down:  {key: "s",     code: "KeyS",      keyCode: 83},
-  Right: {key: "d",     code: "KeyD",      keyCode: 68},
-  A:     {key: " ",     code: "Space",     keyCode: 32},
-  B:     {key: "Shift", code: "ShiftLeft", keyCode: 16},
-  Start: {key: "Enter", code: "Enter",     keyCode: 13}
+  Up:    {key: "w",     code: "KeyW",      keyCode: 87, which: 87},
+  Left:  {key: "a",     code: "KeyA",      keyCode: 65, which: 65},
+  Down:  {key: "s",     code: "KeyS",      keyCode: 83, which: 83},
+  Right: {key: "d",     code: "KeyD",      keyCode: 68, which: 68},
+  A:     {key: " ",     code: "Space",     keyCode: 32, which: 32},
+  B:     {key: "Shift", code: "ShiftLeft", keyCode: 16, which: 16},
+  Start: {key: "Enter", code: "Enter",     keyCode: 13, which: 13}
 }];
 
 // Load Keymappings from the window.localStorage if possible

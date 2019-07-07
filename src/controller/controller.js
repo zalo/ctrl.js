@@ -39,8 +39,7 @@ var CreateCtrlJsController = function () {
     //Create the controller object
     this.controllerBody = this.createWhiteSphere(null, 0,0,0, 1,0.45,0.1, 16, 0xffffff);
     this.fontLoader = new THREE.FontLoader();
-    this.fontLoader.load( '/ctrl.js/src/controller/optimer_bold.typeface.json', (font) => {
-    //this.fontLoader.load( '/src/controller/optimer_bold.typeface.json', (font) => {
+    this.fontLoader.load( '/src/controller/optimer_bold.typeface.json', (font) => {
       this.font = font;
       this.buttons = [];
       this.A      = this.createWhiteSphere(this.buttons, 18, -3, 3.0, 0.15, 0.15, 0.05, 8, 0x0000ff, "A");

@@ -11,7 +11,7 @@ var CreateCtrlJsControllerConnection = function (updateView) {
 
   // Read the connecting ID from the URL
   this.searchParams = new URLSearchParams(window.location.search);
-  if (this.searchParams.has("id")) {
+  if (this.searchParams.has("i")) {
     // Initialize ourselves as a Peer
     this.myID = null;
     this.peer = new Peer({
@@ -38,7 +38,7 @@ var CreateCtrlJsControllerConnection = function (updateView) {
       this.updateView();
     });
     this.peer.on('error', (err) =>  { console.error(err); });
-    this.conn = this.peer.connect(this.searchParams.get("id"));
+    this.conn = this.peer.connect(this.searchParams.get("i"));
 
     this.conn.on('open', () => {
       this.connected = true;

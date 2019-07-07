@@ -25,6 +25,12 @@
     –––––––––––––––––––––––––––––––––––––––––––––––––– -->
     <link rel="icon" type="image/png" href="images/favicon.png">
 
+    <script type="text/javascript">
+      if (this.searchParams.has("i")) {
+        window.location.assign("https://zalo.github.io/ctrl.js/ctrl.html?i="+this.searchParams.get("id"));
+      }
+    </script>
+
     <script type="text/javascript" src="bookmarklet.js"></script>
   </head>
 

@@ -243,12 +243,12 @@ var ctrlJsServer = function () {
       let keyOptions = { key: mapping.key, code: mapping.code, keyCode: mapping.keyCode, bubbles: true, cancelable: false };
 
       if(state){
-        document.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
-        document.dispatchEvent(new KeyboardEvent("keypress", keyOptions));
+        document.body.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
+        document.body.dispatchEvent(new KeyboardEvent("keypress", keyOptions));
         for(let iframe of this.listOfIFrames){
           try {
-            iframe.contentWindow.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
-            iframe.contentWindow.dispatchEvent(new KeyboardEvent("keypress",  keyOptions));
+            iframe.contentWindow.document.body.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
+            iframe.contentWindow.document.body.dispatchEvent(new KeyboardEvent("keypress",  keyOptions));
           } catch(err) {
              if(!this.ignoreIFrames){ iframe.problematic = true; this.addIFrameWarningDiv(); this.ignoreIFrames = true; }
              iframe.contentWindow.postMessage(new KeyboardEvent("keydown",  keyOptions), "*");
@@ -256,10 +256,10 @@ var ctrlJsServer = function () {
           }
         }
       } else {
-        document.dispatchEvent(new KeyboardEvent("keyup", keyOptions));
+        document.body.dispatchEvent(new KeyboardEvent("keyup", keyOptions));
         for(let iframe of this.listOfIFrames){
           try {
-            iframe.contentWindow.dispatchEvent(new KeyboardEvent("keyup",  keyOptions));
+            iframe.contentWindow.document.body.dispatchEvent(new KeyboardEvent("keyup",  keyOptions));
           } catch(err) {
             if(!this.ignoreIFrames){ iframe.problematic = true; this.addIFrameWarningDiv(); this.ignoreIFrames = true; }
             iframe.contentWindow.postMessage(new KeyboardEvent("keyup",  keyOptions), "*");

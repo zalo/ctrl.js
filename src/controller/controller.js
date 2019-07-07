@@ -15,11 +15,11 @@ var CreateCtrlJsController = function () {
 
     // Set up the Renderer
     this.curCanvas = document.createElement('canvas');
-    this.curCanvas.style = "position:sticky; top:0px; left:0px; bottom:0px; right:0px; z-index: 1;";
+    this.curCanvas.style = "position:sticky; position: -webkit-sticky; padding:0px; margin:0px; top:0px; left:0px; bottom:0px; right:0px; z-index: 1;";
     //curCanvas.id = canvasId;
     this.parentNode.insertBefore(this.curCanvas, document.currentScript.nextSibling);
-    this.renderer = new THREE.WebGLRenderer({ canvas: this.curCanvas, antialias: true });
-    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer = new THREE.WebGLRenderer({ canvas: this.curCanvas, antialias: false });
+    //this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.shadowMap.enabled = true;
     this.setSize();
     window.addEventListener('resize', this.setSize, false);

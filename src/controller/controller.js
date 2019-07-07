@@ -15,7 +15,7 @@ var CreateCtrlJsController = function () {
 
     // Set up the Renderer
     this.curCanvas = document.createElement('canvas');
-    this.curCanvas.style = "position:fixed; top:0px; left:0px; bottom:0px; right:0px; z-index: 1;";
+    this.curCanvas.style = "position:sticky; top:0px; left:0px; bottom:0px; right:0px; z-index: 1;";
     //curCanvas.id = canvasId;
     this.parentNode.insertBefore(this.curCanvas, document.currentScript.nextSibling);
     this.renderer = new THREE.WebGLRenderer({ canvas: this.curCanvas, antialias: true });

@@ -27,4 +27,4 @@ The current default button mapping is:
 
 ## Credits
 
-Based on [peer.js](https://peerjs.com/), [qrcode.js](https://github.com/davidshimjs/qrcodejs/), and [three.js](https://threejs.org/).
+Based on [peer.js](https://peerjs.com/), [qrcode.js](https://github.com/davidshimjs/qrcodejs/), [three.js](https://threejs.org/), and [Skeleton.css](http://getskeleton.com/).

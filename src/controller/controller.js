@@ -178,7 +178,7 @@ var CreateCtrlJsController = function () {
     event.preventDefault();
     event.stopPropagation();
     this.viewDirty = true;
-    if(this.useJoystick) { this.frameNumber = 0; } // Forces an instant refresh
+    //if(this.useJoystick) { this.frameNumber = 0; } // Forces an instant refresh
     this.handleTouches();
   }.bind(this);
   this.onTouchEnd = function(event){
@@ -285,7 +285,7 @@ var CreateCtrlJsController = function () {
     // Set up a lazy render loop where it only renders if it's been interacted with in the last second
     // And even then, only every third frame to preserve the battery-life of the phone
     if (this.viewDirty) { this.lastTimeRendered = this.time.getElapsedTime(); this.viewDirty = false; }
-    if (this.time.getElapsedTime() - this.lastTimeRendered < 0.2 && this.frameNumber % 2 === 0) {
+    if (this.time.getElapsedTime() - this.lastTimeRendered < 0.2 && this.frameNumber % 3 === 0) {
       this.scene.background = this.ctrljs.disconnected ? new THREE.Color(0xff0000) : new THREE.Color(0x000000);
       this.renderer.render(this.scene, this.camera); 
     }

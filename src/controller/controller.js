@@ -248,11 +248,11 @@ var CreateCtrlJsController = function () {
             let movement = new THREE.Vector2((touch.clientX - touch.startX), (touch.clientY - touch.startY)).multiplyScalar(0.01).clampLength(0,0.5);
             this.buttons[closestButton].quaternion.setFromEuler(new THREE.Euler(movement.y, movement.x, 0));
 
-            movement.divideScalar(0.71); let sensitivity = 0.3;
-            if(movement.dot(new THREE.Vector2( 1, 0)) > sensitivity) { this.handlePress(this.Right); }
-            if(movement.dot(new THREE.Vector2(-1, 0)) > sensitivity) { this.handlePress(this.Left);  }
-            if(movement.dot(new THREE.Vector2( 0,-1)) > sensitivity) { this.handlePress(this.Up);    }
-            if(movement.dot(new THREE.Vector2( 0, 1)) > sensitivity) { this.handlePress(this.Down);  }
+            movement.divideScalar(0.5); let sensitivity = 0.7; // 0-1 Value for what it takes to trigger that axis...
+            if(movement.dot(new THREE.Vector2( 1, 0)) > (1.0-sensitivity)) { this.handlePress(this.Right); }
+            if(movement.dot(new THREE.Vector2(-1, 0)) > (1.0-sensitivity)) { this.handlePress(this.Left);  }
+            if(movement.dot(new THREE.Vector2( 0,-1)) > (1.0-sensitivity)) { this.handlePress(this.Up);    }
+            if(movement.dot(new THREE.Vector2( 0, 1)) > (1.0-sensitivity)) { this.handlePress(this.Down);  }
           }
         }
       }

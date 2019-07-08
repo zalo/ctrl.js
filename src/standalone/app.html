@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>ctrl.exe</title>
+        <link rel="stylesheet" href="app.css" />
+        <script type="text/javascript">
+            var asyncNode = window.deskgap.asyncNode;
+            var messageUI = window.deskgap.messageUI;
+        </script>
+        <script type="text/javascript" src="https://ctrljs.xyz/bookmarklet.js"></script>
+    </head>
+    <body>
+        <main>
+            <script type="text/javascript">
+                messageUI.on('hello-from-node', function (e, message) {
+                    document.getElementById('node-message').textContent = message;
+                });
+                function sendMessage() {
+                    messageUI.send('hello-to-node', document.getElementById('ui-message-content').value);
+                }
+            </script>
+        </main>
+    </body>
+</html>

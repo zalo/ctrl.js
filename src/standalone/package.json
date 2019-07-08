@@ -1,0 +1,10 @@
+{
+	"name": "ctrljs-standalone",
+	"productName": "ctrl.js Standalone",
+	"main": "main.js",
+	"dependencies": {
+		"robotjs": "^0.5.1",
+		"peerjs": "^1.0.0",
+		"qrcodejs": "^1.0.0"
+  }
+}

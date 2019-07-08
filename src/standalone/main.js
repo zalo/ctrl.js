@@ -18,7 +18,7 @@ app.once('ready', () => {
 
     mainWindow = new BrowserWindow({
         show: false,
-        width: 800, height: 600,
+        width: 300, height: 600,
     }).once('ready-to-show', () => {
         mainWindow.show();
 

@@ -60,17 +60,6 @@ var ctrlJsServer = function () {
       config: {
         iceServers: [{
           urls: "stun:stun.l.google.com:19302"
-        }, {
-          username: "RZyygb9oUYQFuiNJ62O1gr61l_qbtLeiyH6driGchkplknMYoj2q2loF_33bLqk9AAAAAF0c60R6YWxv",
-          credential: "44ba5ddc-9dbb-11e9-997a-a695319b0c25",
-          urls: [
-            "turn:ws-turn2.xirsys.com:80?transport=udp",
-            "turn:ws-turn2.xirsys.com:3478?transport=udp",
-            "turn:ws-turn2.xirsys.com:80?transport=tcp",
-            "turn:ws-turn2.xirsys.com:3478?transport=tcp",
-            "turns:ws-turn2.xirsys.com:443?transport=tcp",
-            "turns:ws-turn2.xirsys.com:5349?transport=tcp"
-          ]
         }]
       }
     });

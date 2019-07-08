@@ -84,9 +84,9 @@ var ctrlJsServer = function () {
       // Scan for iframes to inject keyboard events into...
       this.listOfIFrames = document.getElementsByTagName("iframe");
       this.ignoreIFrames = false;
-      for(let iframe of this.listOfIFrames){
-        try { iframe.contentWindow.document;
-        } catch(err) { iframe.problematic = true; this.ignoreIFrames = true; }
+      for(let i = 0; i < this.listOfIFrames.length; i++){
+        try { this.listOfIFrames[i].contentWindow.document;
+        } catch(err) { this.listOfIFrames[i].problematic = true; this.ignoreIFrames = true; }
       }
       if(this.ignoreIFrames) { this.addIFrameWarningDiv(); }
 
@@ -230,8 +230,8 @@ var ctrlJsServer = function () {
         }.bind(this));
         if(updateText){
           connection.playerDiv.label.innerHTML = '<font style="color:#00cc00;font-weight:bold;font-size:1.25em">P' + (connection.playerNum+1) + '</font>' + ' - ' + connection.playerName;
-          for(button of connection.playerDiv.settings.content.buttons){
-            button.innerText = siteKeymappings[connection.playerNum][button.name].code;
+          for(let i = 0; i < connection.playerDiv.settings.content.buttons.length; i++){
+            connection.playerDiv.settings.content.buttons[i].innerText = siteKeymappings[connection.playerNum][connection.playerDiv.settings.content.buttons[i].name].code;
           }
         }
       }
@@ -245,24 +245,24 @@ var ctrlJsServer = function () {
       if(state){
         document.body.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
         document.body.dispatchEvent(new KeyboardEvent("keypress", keyOptions));
-        for(let iframe of this.listOfIFrames){
+        for(let i = 0; i < this.listOfIFrames.length; i++){
           try {
-            iframe.contentWindow.document.body.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
-            iframe.contentWindow.document.body.dispatchEvent(new KeyboardEvent("keypress",  keyOptions));
+            this.listOfIFrames[i].contentWindow.document.body.dispatchEvent(new KeyboardEvent("keydown",  keyOptions));
+            this.listOfIFrames[i].contentWindow.document.body.dispatchEvent(new KeyboardEvent("keypress",  keyOptions));
           } catch(err) {
-             if(!this.ignoreIFrames){ iframe.problematic = true; this.addIFrameWarningDiv(); this.ignoreIFrames = true; }
-             iframe.contentWindow.postMessage(new KeyboardEvent("keydown",  keyOptions), "*");
-             iframe.contentWindow.postMessage(new KeyboardEvent("keypress",  keyOptions), "*");
+             if(!this.ignoreIFrames){ this.listOfIFrames[i].problematic = true; this.addIFrameWarningDiv(); this.ignoreIFrames = true; }
+             this.listOfIFrames[i].contentWindow.postMessage(new KeyboardEvent("keydown",  keyOptions), "*");
+             this.listOfIFrames[i].contentWindow.postMessage(new KeyboardEvent("keypress",  keyOptions), "*");
           }
         }
       } else {
         document.body.dispatchEvent(new KeyboardEvent("keyup", keyOptions));
-        for(let iframe of this.listOfIFrames){
+        for(let i = 0; i < this.listOfIFrames.length; i++){
           try {
-            iframe.contentWindow.document.body.dispatchEvent(new KeyboardEvent("keyup",  keyOptions));
+            this.listOfIFrames[i].contentWindow.document.body.dispatchEvent(new KeyboardEvent("keyup",  keyOptions));
           } catch(err) {
-            if(!this.ignoreIFrames){ iframe.problematic = true; this.addIFrameWarningDiv(); this.ignoreIFrames = true; }
-            iframe.contentWindow.postMessage(new KeyboardEvent("keyup",  keyOptions), "*");
+            if(!this.ignoreIFrames){ this.listOfIFrames[i].problematic = true; this.addIFrameWarningDiv(); this.ignoreIFrames = true; }
+            this.listOfIFrames[i].contentWindow.postMessage(new KeyboardEvent("keyup",  keyOptions), "*");
           }
         }
       }
@@ -276,9 +276,9 @@ var ctrlJsServer = function () {
       this.statusView.iframeWarning.innerHTML = "<p>Can't send keyboard inputs into IFrame.</p>"+
         '<p>Press <a href='+ "\"javascript:document.getElementById('statusView').removeChild(document.getElementById('StatusIFrameWarning'));\">Okay</a> to Ignore</p>"+
         "<p> or Open the IFrame Directly:</p>";
-      for(let iframe of this.listOfIFrames){
-        if(iframe.problematic){
-          this.statusView.iframeWarning.innerHTML += "<p><a href="+iframe.src+">"+iframe.id+"</a></p>";
+      for(let i = 0; i < this.listOfIFrames.length; i++){
+        if(this.listOfIFrames[i].problematic){
+          this.statusView.iframeWarning.innerHTML += "<p><a href="+this.listOfIFrames[i].src+">"+this.listOfIFrames[i].id+"</a></p>";
         }
       }
       this.statusView.insertAdjacentElement("afterbegin", this.statusView.iframeWarning);

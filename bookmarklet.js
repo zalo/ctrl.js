@@ -2,9 +2,9 @@
 // javascript:{var s=document.createElement("script");s.src="https://zalo.github.io/ctrl.js/bookmarklet.js",document.body.appendChild(s);};void(0);
 
 // Execute on a delay in-case the body hasn't been constructed yet...
-setTimeout(()=>{
+setTimeout(function() {
   // Don't initialize the bookmarklet again if there's already a StatusView
-  let existingStatusView = document.getElementById("statusView");
+  var existingStatusView = document.getElementById("statusView");
   if(typeof(existingStatusView) === 'undefined' || existingStatusView === null){
     var i, s, ss = [
       'https://ctrljs.xyz/src/peerjs.min.js', 

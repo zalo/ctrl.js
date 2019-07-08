@@ -76,7 +76,7 @@ var ctrlJsServer = function () {
     });
 
     // Upon connection, begin initializing Network-related callbacks
-    this.peer.on('open', (id) => {
+    this.peer.on('open', function(id) {
       this.peerId = id;
       console.log('My peer ID is: ' + this.peerId);
       this.createStatusView();
@@ -90,16 +90,16 @@ var ctrlJsServer = function () {
       }
       if(this.ignoreIFrames) { this.addIFrameWarningDiv(); }
 
-      this.peer.on('connection', (connection) => {
-        connection.on('open', () => {
+      this.peer.on('connection', function(connection) {
+        connection.on('open', function() {
           this.connections[connection.peer] = connection;
           console.log('I have seen that: ' + connection.peer + " has successfully connected!");
           connection.buttonStates = {};
           this.updatePlayerNumbers(false);
           this.addPlayerDiv(connection);
           this.updatePlayerNumbers(true);
-        });
-        connection.on('data', (data) => {
+        }.bind(this));
+        connection.on('data', function(data) {
           if("pingTime" in data){ connection.send(data); }
           if("playerName" in data){
              connection.playerName = data.playerName; 
@@ -122,17 +122,17 @@ var ctrlJsServer = function () {
               connection.close();
             }
           }
-        });
-        connection.on('close', () => {
+        }.bind(this));
+        connection.on('close', function() {
           console.log(connection.peer + " has left...");
           this.statusView.players.removeChild(connection.playerDiv);
           delete this.connections[connection.peer];
           this.updatePlayerNumbers();
-        });
-        connection.on('error', (err) => { console.error(err); });
-      });
-    });
-    this.peer.on('error', (err) => { console.error(err); });
+        }.bind(this));
+        connection.on('error', function(err) { console.error(err); });
+      }.bind(this));
+    }.bind(this));
+    this.peer.on('error', function(err) { console.error(err); });
 
     // Create the Miniature Viewport in the corner of the page
     this.createStatusView = function(){
@@ -191,7 +191,7 @@ var ctrlJsServer = function () {
       connection.playerDiv.settings.content.buttons = [];
 
       // Create the List of Keys to Map
-      Object.getOwnPropertyNames(siteKeymappings[connection.playerNum]).forEach((buttonName) => {
+      Object.getOwnPropertyNames(siteKeymappings[connection.playerNum]).forEach(function(buttonName) {
         let listItem = document.createElement("li"); listItem.innerText = buttonName+": ";
         let button = document.createElement("button"); button.innerText = siteKeymappings[connection.playerNum][buttonName].code;
         button.name = buttonName; button.connection = connection;
@@ -210,7 +210,7 @@ var ctrlJsServer = function () {
           document.addEventListener('keydown', button.keyDownFunction, false);
         }
         connection.playerDiv.settings.content.buttons.push(button);
-      });
+      }.bind(this));
       connection.playerDiv.settings.insertAdjacentElement("beforeend", connection.playerDiv.settings.content);
 
       connection.playerDiv.insertAdjacentElement("beforeend", connection.playerDiv.label);
@@ -223,11 +223,11 @@ var ctrlJsServer = function () {
       if(typeof(connection.playerDiv) !== 'undefined'){
         // This is "expensive" and can trigger layouts!
         connection.playerDiv.label.style = "position: relative; padding:2px; display: block; background-image: linear-gradient(white, gray); border: 1px solid black;text-shadow: 0px 0px 2px slategrey;";
-        Object.getOwnPropertyNames(connection.buttonStates).forEach((btn) => {
+        Object.getOwnPropertyNames(connection.buttonStates).forEach(function(btn) {
           if(connection.buttonStates[btn]) {
             connection.playerDiv.label.style = "position: relative; padding:2px; display: block; background-image: linear-gradient(gray, white); border: 1px solid black;text-shadow: 0px 0px 2px slategrey;";
           }
-        });
+        }.bind(this));
         if(updateText){
           connection.playerDiv.label.innerHTML = '<font style="color:#00cc00;font-weight:bold;font-size:1.25em">P' + (connection.playerNum+1) + '</font>' + ' - ' + connection.playerName;
           for(button of connection.playerDiv.settings.content.buttons){
@@ -288,25 +288,25 @@ var ctrlJsServer = function () {
     // The number of players have changed, so send updates to all of the connected clients.
     this.updatePlayerNumbers = function(updateDiv = true) {
       let i = 0; 
-      Object.getOwnPropertyNames(this.connections).forEach((peerID) => {
+      Object.getOwnPropertyNames(this.connections).forEach(function(peerID) {
         this.connections[peerID].playerNum = i;
         this.connections[peerID].send({playerNum: i});
         if(updateDiv){ this.updatePlayerDiv(this.connections[peerID], true); }
         i+=1; 
-      });
+      }.bind(this));
     }
 
     // Rescan for iframes that have been added since the bookmarklet was loaded
-    this.iframeScanner = setInterval(()=>{
+    this.iframeScanner = setInterval(function(){
       this.listOfIFrames = document.getElementsByTagName("iframe");
-    }, 5000);
+    }.bind(this), 5000);
 
     // Clean up the connections before the page exits
     window.addEventListener("beforeunload", function() {
-      Object.getOwnPropertyNames(this.connections).forEach((peerID) => {
+      Object.getOwnPropertyNames(this.connections).forEach(function(peerID) {
         this.connections[peerID].send({connected: false});
         //this.connections[peerID].close();
-      });
+      }.bind(this));
       //if(this.peer !== null){ this.peer.close(); }
     });
   }
@@ -315,6 +315,6 @@ var ctrlJsServer = function () {
 }
 
 // Initialize the server view on a delay
-setTimeout(()=>{
+setTimeout(function() {
   var ctrlJs = new ctrlJsServer();
-}, 200);
+}.bind(this), 200);

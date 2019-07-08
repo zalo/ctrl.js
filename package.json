@@ -1,0 +1,19 @@
+{
+	"name": "ctrljs",
+	"productName": "ctrl.js",
+	"description": "Multiplayer bookmarklet with your phone.",
+	"homepage": "https://ctrljs.xyz",
+	"repository": {
+    "type": "git",
+    "url": "git+https://github.com/zalo/ctrl.js.git"
+  },
+	"author": {
+    "name": "Johnathon Selstad"
+	},
+	"license": "MIT",
+	"bundleDependencies": false,
+	"devDependencies": {
+		"@types/peerjs": "0.0.30",
+		"@types/three": "^0.103.2"
+  }
+}

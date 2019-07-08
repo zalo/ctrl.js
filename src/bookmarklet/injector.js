@@ -127,7 +127,7 @@ var ctrlJsServer = function () {
           console.log(connection.peer + " has left...");
           this.statusView.players.removeChild(connection.playerDiv);
           delete this.connections[connection.peer];
-          this.updatePlayerNumbers();
+          this.updatePlayerNumbers(true);
         }.bind(this));
         connection.on('error', function(err) { console.error(err); });
       }.bind(this));
@@ -286,7 +286,7 @@ var ctrlJsServer = function () {
     this.hideWarning = function(){ this.statusView.removeChild(this.statusView.iframeWarning); }
 
     // The number of players have changed, so send updates to all of the connected clients.
-    this.updatePlayerNumbers = function(updateDiv = true) {
+    this.updatePlayerNumbers = function(updateDiv) {
       let i = 0; 
       Object.getOwnPropertyNames(this.connections).forEach(function(peerID) {
         this.connections[peerID].playerNum = i;

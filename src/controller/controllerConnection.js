@@ -38,7 +38,7 @@ var CreateCtrlJsControllerConnection = function (updateView) {
       this.updateView();
     });
     this.peer.on('error', (err) =>  { console.error(err); });
-    this.conn = this.peer.connect(this.searchParams.get("i"));
+    this.conn = this.peer.connect(this.searchParams.get("i"), { serialization: "json" });
 
     this.conn.on('open', () => {
       this.connected = true;

@@ -1,10 +1,43 @@
 const { app, BrowserWindow, MenuItem, Menu, ipcMain, systemPreferences, dialog } = require('deskgap'); // The OS Window Container
 const robot = require("robotjs"); // The Input Spoofing System
 
+// The Node.js Overrides enabling Websockets and WebRTC
+WebSocket             = require('ws');
+RTCPeerConnection     = require('wrtc').RTCPeerConnection;
+RTCSessionDescription = require('wrtc').RTCSessionDescription;
+RTCIceCandidate       = require('wrtc').RTCIceCandidate;
+
+require('peerjs/lib/exports');
+location = { protocol: 'http' };
+
+// Part of the implementation of the node-peer-js system...
+ipcMain.on('peerConstructor', (e, iceConfig) => {
+    var currentPeer = new Peer(iceConfig);
+    currentPeer.on("open",  (id)    => { e.sender.send('peerOpen',  id);    });
+    currentPeer.on("error", (error) => { e.sender.send('peerError', error); });
+    currentPeer.on("connection", (connection) => {
+        connection.on("open",  () => { e.sender.send('connectionOpen',   { peer: connection.peer }); });
+        connection.on("close", () => { e.sender.send('connectionClose',  { peer: connection.peer }); });
+        connection.on("data",  (data)  => {
+            data.peer = connection.peer; e.sender.send('connectionData',  data); 
+        });
+        connection.on("error", (error) => {
+            error.peer = connection.peer; e.sender.send('connectionError', error); 
+        });
+        e.sender.send('peerConnection', { peer: connection.peer });
+    });
+});
+
 // Apply keyevents from the UI
-ipcMain.on('keyEvent', (e, message) => {
-    //e.sender.send('hello-from-node', "Hello, " + message);
-    //robot.
+ipcMain.on('keydown', (e, keyEvent) => {
+    let chrCode = keyEvent.keyCode - 48 * Math.floor(keyEvent.keyCode / 48);
+    let chr = String.fromCharCode((96 <= keyEvent.keyCode) ? chrCode: keyEvent.keyCode);
+    robot.keyToggle(chr.toLowerCase(), "down");
+});
+ipcMain.on('keyup', (e, keyEvent) => {
+    let chrCode = keyEvent.keyCode - 48 * Math.floor(keyEvent.keyCode / 48);
+    let chr = String.fromCharCode((96 <= keyEvent.keyCode) ? chrCode: keyEvent.keyCode);
+    robot.keyToggle(chr.toLowerCase(), "up");
 });
 
 // Send an example message to the html window...

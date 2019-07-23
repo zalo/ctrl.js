@@ -255,6 +255,7 @@ var ctrlJsServer = function () {
              this.listOfIFrames[i].contentWindow.postMessage(new KeyboardEvent("keypress",  keyOptions), "*");
           }
         }
+        if(window.deskgap){ window.deskgap.messageUI.send("keydown", keyOptions); }
       } else {
         document.body.dispatchEvent(new KeyboardEvent("keyup", keyOptions));
         for(let i = 0; i < this.listOfIFrames.length; i++){
@@ -265,6 +266,7 @@ var ctrlJsServer = function () {
             this.listOfIFrames[i].contentWindow.postMessage(new KeyboardEvent("keyup",  keyOptions), "*");
           }
         }
+        if(window.deskgap){ window.deskgap.messageUI.send("keyup", keyOptions); }
       }
     }
 

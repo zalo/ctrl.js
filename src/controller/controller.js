@@ -213,7 +213,7 @@ var CreateCtrlJsController = function () {
   // Run this with every touch event, updates the touch logic on demand
   this.handleTouches = function(){
     // Clear Highlighting
-    for(emitting of this.previousPressed){
+    for(let emitting of this.previousPressed){
       if(typeof emitting.material !== 'undefined'){
         emitting.material.emissive.setHex( 0x000000 );
         emitting.material.emissiveIntensity = 1;
@@ -229,7 +229,7 @@ var CreateCtrlJsController = function () {
 
         // Raycast against all the buttons!
         this.raycaster.setFromCamera( this.touchToRay(touch.startX, touch.startY), this.camera );
-        intersections = this.raycaster.intersectObjects( [this.controllerBody] );//this.buttons );
+        let intersections = this.raycaster.intersectObjects( [this.controllerBody] );//this.buttons );
         for(let i = 0; i < intersections.length; i++){
           let minDist = 1000.0; let closestButton = 0;
           for(let j = 0; j < this.buttons.length; j++){

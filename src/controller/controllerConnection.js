@@ -78,13 +78,13 @@ var CreateCtrlJsControllerConnection = function (updateView) {
 
   // Send commands on valid button presses and releases
   this.sendPress = function (button)  {
-    if (this.connected && (!button in this.keypressStates || !this.keypressStates[button])) {
+    if (this.connected && (!(button in this.keypressStates) || !this.keypressStates[button])) {
       this.keypressStates[button] = true;
       if(this.conn != null){ this.conn.send({ state: 1, btn: button}); }
     }
   }
   this.sendRelease = function (button){
-    if (this.connected && (!button in this.keypressStates || this.keypressStates[button])) {
+    if (this.connected && (!(button in this.keypressStates) || this.keypressStates[button])) {
       this.keypressStates[button] = false;
       if(this.conn != null){ this.conn.send({ state: 0, btn: button}); }
     }

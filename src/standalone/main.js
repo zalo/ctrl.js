@@ -1,4 +1,4 @@
-const { app, BrowserWindow, MenuItem, Menu, ipcMain, systemPreferences, dialog } = require('deskgap'); // The OS Window Container
+const { app, BrowserWindow, /*MenuItem, Menu,*/ ipcMain/*, systemPreferences, dialog*/ } = require('deskgap'); // The OS Window Container
 const robot = require("robotjs"); // The Input Spoofing System
 
 // The Node.js Overrides enabling Websockets and WebRTC
@@ -64,7 +64,7 @@ app.once('ready', () => {
         var width = screenSize.width;
 
         for (var x = 0; x < width; x++) {
-            y = height * Math.sin((twoPI * x) / width) + height;
+            let y = height * Math.sin((twoPI * x) / width) + height;
             robot.moveMouse(x, y);
         }
     });

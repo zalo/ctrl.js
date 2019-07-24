@@ -183,7 +183,7 @@ var ctrlJsServer = function () {
       connection.playerDiv.label.onclick = function() {
         this.settings.open = !this.settings.open;
         this.settings.style = this.settings.open ? "display: block;" : "display: none;";
-      }
+      };
 
       connection.playerDiv.settings.content = document.createElement("div");
       connection.playerDiv.settings.content.style = "background: white;width: auto; display: block; padding:2px;";
@@ -208,7 +208,7 @@ var ctrlJsServer = function () {
         button.onclick = function() {
           this.innerText = "Waiting for keypress...";
           document.addEventListener('keydown', button.keyDownFunction, false);
-        }
+        };
         connection.playerDiv.settings.content.buttons.push(button);
       }.bind(this));
       connection.playerDiv.settings.insertAdjacentElement("beforeend", connection.playerDiv.settings.content);
@@ -318,5 +318,5 @@ var ctrlJsServer = function () {
 
 // Initialize the server view on a delay
 setTimeout(function() {
-  var ctrlJs = new ctrlJsServer();
+  new ctrlJsServer();
 }.bind(this), 200);

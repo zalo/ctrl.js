@@ -2,7 +2,7 @@
 	"name": "ctrljs",
 	"productName": "ctrl.js",
 	"description": "Multiplayer bookmarklet with your phone.",
-	"homepage": "https://ctrljs.xyz",
+	"homepage": "https://zalo.github.io/ctrl.js",
 	"repository": {
     "type": "git",
     "url": "git+https://github.com/zalo/ctrl.js.git"

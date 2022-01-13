@@ -7,9 +7,9 @@ setTimeout(function() {
   var existingStatusView = document.getElementById("statusView");
   if(typeof(existingStatusView) === 'undefined' || existingStatusView === null){
     var i, s, ss = [
-      'https://ctrljs.xyz/src/peerjs.min.js', 
-      'https://ctrljs.xyz/src/bookmarklet/qrcode.min.js', 
-      'https://ctrljs.xyz/src/bookmarklet/injector.js'];
+      'https://zalo.github.io/ctrl.js/src/peerjs.min.js', 
+      'https://zalo.github.io/ctrl.js/src/bookmarklet/qrcode.min.js', 
+      'https://zalo.github.io/ctrl.js/src/bookmarklet/injector.js'];
     //var i, s, ss = ['/src/peerjs.min.js', '/src/bookmarklet/qrcode.min.js', '/src/bookmarklet/injector.js']; // The local testing version...
     for (i = 0; i != ss.length; i++) {
       s = document.createElement('script');
